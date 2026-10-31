@@ -8,8 +8,8 @@
    ===================================================================== */
 "use strict";
 
-var VERSION = "cbbus-v3"; // v3: simplified page, saved on install
-var FILES = ["./", "index.html", "assets/data/routes.js", "assets/photos/bus-hero.jpg"];
+var VERSION = "cbbus-v4"; // v4: more bus photos and video
+var FILES = ["./", "index.html", "assets/data/routes.js", "assets/photos/bus-hero.jpg", "assets/photos/bus-boarding.jpg", "assets/photos/bus-02.jpg", "assets/photos/ngoc-xuan.jpg", "assets/video/hotel-gate.jpg", "assets/video/bus-sen.jpg"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(

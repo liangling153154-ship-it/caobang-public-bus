@@ -33,6 +33,11 @@ h3 { font-size:1rem; margin-bottom:6px; }
 section { display:grid; gap:12px; min-width:0; }
 .warn { padding:13px 15px; border-radius:12px; background:var(--amber-soft); color:var(--amber); }
 .photo { border-radius:12px; }
+figure { margin:0; }
+figcaption { margin-top:6px; font-size:.92rem; color:var(--muted); }
+.rail { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:0 16px 4px; scroll-padding:0 16px; }
+.rail figure { flex:0 0 85%; scroll-snap-align:start; }
+video { display:block; width:100%; height:auto; background:#EAEFED; }
 
 .steps { display:grid; gap:12px; counter-reset:n; }
 .steps li { display:grid; grid-template-columns:34px 1fr; gap:10px; counter-increment:n; }
@@ -91,7 +96,12 @@ footer { font-size:.86rem; color:var(--muted); }
     <li><span>Pay on the bus: <b data-fare></b>, cash only.</span></li>
   </ol>
   <p class="warn"><b>Go early. Do not trust the bus times.</b> Go to the road now and wait. A bus comes every 30–40 minutes.</p>
-  <img class="photo" src="assets/photos/bus-hero.jpg" width="900" height="619" loading="lazy" alt="Yellow and red Cao Bang city bus with its route sign on the windscreen.">
+  <div class="rail">
+    <figure><video class="photo" muted loop playsinline preload="none" poster="assets/video/hotel-gate.jpg" width="854" height="480" src="assets/video/hotel-gate.mp4" aria-label="A traveller waits at the roadside and waves as the bus comes."></video><figcaption>Stand at the roadside. Wave.</figcaption></figure>
+    <figure><video class="photo" muted loop playsinline preload="none" poster="assets/video/bus-sen.jpg" width="854" height="480" src="assets/video/bus-sen.mp4" aria-label="A traveller on the street as the yellow bus drives towards them."></video><figcaption>The bus comes along the road.</figcaption></figure>
+    <figure><img class="photo" src="assets/photos/bus-boarding.jpg" width="512" height="341" loading="lazy" alt="People getting on a yellow and red bus at the roadside. The sign says TP Cao Bang - TT. Ban Gioc."><figcaption>Wave. The bus stops. Get on.</figcaption></figure>
+    <figure><img class="photo" src="assets/photos/bus-hero.jpg" width="900" height="619" loading="lazy" alt="Front of a yellow and red bus with its route sign on the windscreen."><figcaption>Look for this yellow and red bus.</figcaption></figure>
+  </div>
 </section>
 
 <section>
@@ -107,6 +117,8 @@ footer { font-size:.86rem; color:var(--muted); }
     <p data-route="03"><b>Bus 03 goes to the falls.</b> Stand on the side going away from the city.</p>
     <p data-route="03"><b>Hospital to Ngoc Xuan roundabout:</b> buses 03 and 02 use the same road. Take 03.</p>
     <p class="r2" data-route="02" hidden><b>Far from bus 03?</b> Take bus 02 to Ngoc Xuan roundabout. Change to bus 03 there.</p>
+    <figure data-route="02" hidden><img class="photo" src="assets/photos/ngoc-xuan.jpg" width="1024" height="514" loading="lazy" alt="Ngoc Xuan roundabout. A traveller waits in front of Pho Sanh as bus 03 comes."><figcaption>Ngoc Xuan roundabout: wait here for bus 03.</figcaption></figure>
+    <figure data-route="02" hidden><img class="photo" src="assets/photos/bus-02.jpg" width="900" height="600" loading="lazy" alt="A line of yellow and red buses to Nuoc Hai."><figcaption>Buses to Nuoc Hai. Old photo: the number may be different.</figcaption></figure>
   </div>
 </section>
 
@@ -135,7 +147,7 @@ footer { font-size:.86rem; color:var(--muted); }
   <h2>Questions</h2>
   <div class="faq">
     <details><summary>The bus did not stop</summary><p>Wave early. The next bus comes in 30–40 minutes.</p></details>
-    <details><summary>Is this my bus?</summary><p>Look for 03. The sign may say “TP Cao Bằng – Trùng Khánh”. Show the line “Does this bus go to Ban Gioc?”</p></details>
+    <details><summary>Is this my bus?</summary><p>Look for 03. The sign may say “Bản Giốc” or “Trùng Khánh”. Show the line “Does this bus go to Ban Gioc?”</p></details>
     <details><summary>Can I get off anywhere?</summary><p>Yes. Show “Please stop here” before your place.</p></details>
     <details><summary>Do I buy a ticket first?</summary><p>No. Pay on the bus. Bring small notes.</p></details>
     <details><summary>Is the waterfall ticket included?</summary><p>No. Buy it at the falls gate.</p></details>
@@ -179,7 +191,7 @@ function showRoute(code) {
   el('map').src = 'https://www.google.com/maps/d/embed?hl=en&mid=' + D.maps[code];
   el('mapLink').href = 'https://www.google.com/maps/d/viewer?hl=en&mid=' + D.maps[code];
   each('#tabs button', function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-route') === code ? 'true' : 'false'); });
-  each('.key p', function (p) { p.hidden = p.getAttribute('data-route') !== code; });
+  each('.key [data-route]', function (p) { p.hidden = p.getAttribute('data-route') !== code; });
 }
 showRoute('03');
 el('tabs').addEventListener('click', function (e) {
@@ -200,6 +212,18 @@ el('cards').addEventListener('click', function (e) {
   el('big').showModal();
 });
 el('bigClose').addEventListener('click', function () { el('big').close(); });
+
+/* Videos play only while on screen, to save mobile data. */
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  var watch = new IntersectionObserver(function (items) {
+    items.forEach(function (it) {
+      if (it.isIntersecting) { it.target.play().catch(function () {}); } else { it.target.pause(); }
+    });
+  }, { threshold: .6 });
+  each('video', function (v) { watch.observe(v); });
+} else {
+  each('video', function (v) { v.controls = true; });
+}
 
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   navigator.serviceWorker.register('sw.js').catch(function () {});
