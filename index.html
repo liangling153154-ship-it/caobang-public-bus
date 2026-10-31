@@ -750,14 +750,16 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
         <div class="map-legend">
           <span><span class="lg-band" style="background:#0B6E5F" aria-hidden="true"></span>Route 03</span>
           <span><span class="lg-band" style="background:#1D4E89" aria-hidden="true"></span>Route 02</span>
-          <span><span class="lg-dot" style="background:#9A4C06" aria-hidden="true"></span>Known stop</span>
+          <span><span class="lg-dot" style="background:#9A4C06" aria-hidden="true"></span>Boarding point</span>
+          <span><span class="lg-band" style="background:repeating-linear-gradient(90deg,#0B6E5F 0 5px,transparent 5px 9px)" aria-hidden="true"></span>City section</span>
           <span>&#9654; Away from city</span>
         </div>
         <p class="map-note">
           Route 03 follows QL3 then &#272;T206, traced from road routing data, so the band
           sits on the real tarmac. Route 02 follows t&#7927;nh l&#7897; 203; the bus carries
-          on to S&#243;c Giang past the end of the line shown. Tiles are cached after the
-          first view, so the map still opens with no signal.
+          on to S&#243;c Giang past the end of the line shown. The dashed loop through town
+          is drawn between the real boarding pins, but its exact streets are not mapped.
+          Tiles are cached after the first view, so the map still opens with no signal.
         </p>
       </div>
     </div>
@@ -773,8 +775,8 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
     <div class="callout co-info">
       <span class="co-ico" aria-hidden="true">&#8505;&#65039;</span>
       <div>
-        <b>Both start at the same roundabout.</b>
-        <p>&#272;&#432;&#7901;ng Tr&#242;n Ng&#7885;c Xu&#226;n, by the bus station. Route 03 one side, route 02 the other.</p>
+        <b>The falls bus starts at the hospital.</b>
+        <p>It crosses town and picks up again at &#272;&#432;&#7901;ng Tr&#242;n Ng&#7885;c Xu&#226;n, where route 02 also passes. Board at the hospital and you get a seat.</p>
       </div>
     </div>
   </div>
@@ -783,10 +785,26 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
 <section class="band" id="stops">
   <div class="wrap">
     <p class="sec-label">Stand here</p>
-    <h2>Two spots that always work</h2>
-    <p class="lede">Same roundabout, opposite sides. Photos taken from where you should stand.</p>
+    <h2>Where to board</h2>
+    <p class="lede">Start at the hospital for a seat, or flag the bus at Ng&#7885;c Xu&#226;n. Photos taken from where you should stand.</p>
 
     <div class="stop-cards">
+      <article class="card stop-card">
+        <div class="stop-body">
+          <div class="od-row" style="--od-gap:9px">
+            <span class="rb rb-03" aria-hidden="true">03</span>
+            <h3 class="od-fill">Start: provincial hospital</h3>
+          </div>
+          <p>The falls bus <b>starts here</b>, so you board an empty bus and get a seat. Straight through to the main gate, no change.</p>
+          <p style="font-size:.85rem;color:var(--muted)">No photo of this spot yet. At the hospital gate, ask for <b lang="vi">xe Th&#225;c B&#7843;n Gi&#7889;c</b>.</p>
+          <div class="coord">
+            <code>22.652462, 106.269364</code>
+            <button type="button" class="copy-btn" data-copy="22.652462, 106.269364">Copy</button>
+          </div>
+          <a class="btn btn-jade btn-sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=22.652462,106.269364&amp;travelmode=walking" target="_blank" rel="noopener">Walk here</a>
+        </div>
+      </article>
+
       <article class="card stop-card">
         <figure>
           <img class="od-media" src="assets/photos/transfer-point.png" width="1024" height="514"
@@ -797,9 +815,9 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
         <div class="stop-body">
           <div class="od-row" style="--od-gap:9px">
             <span class="rb rb-03" aria-hidden="true">03</span>
-            <h3 class="od-fill">To the falls</h3>
+            <h3 class="od-fill">Second pickup: Ng&#7885;c Xu&#226;n</h3>
           </div>
-          <p>Wait by <b>Ph&#7903; S&#224;nh</b>, on the side where cars leave town.</p>
+          <p>Same bus, a few minutes after the hospital. Wait by <b>Ph&#7903; S&#224;nh</b>, on the side where cars leave town.</p>
           <div class="coord">
             <code>22.679869, 106.252763</code>
             <button type="button" class="copy-btn" data-copy="22.679869, 106.252763">Copy</button>
@@ -833,8 +851,8 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
     <div class="callout co-info">
       <span class="co-ico" aria-hidden="true">&#128205;</span>
       <div>
-        <b>Getting to the roundabout</b>
-        <p>2 km north of the centre. 25 minutes on foot, or a short motorbike taxi.</p>
+        <b>Which one should I use?</b>
+        <p>The hospital if you want a seat on a full day; Ng&#7885;c Xu&#226;n if it is closer to your room. Both are a short motorbike taxi from the centre.</p>
       </div>
     </div>
 
@@ -916,7 +934,7 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
         <div class="choice" id="startChoice">
           <button type="button" class="choice-btn" data-start="city" aria-pressed="true">
             <b>In the city</b>
-            <span>Anywhere in Cao B&#7857;ng. You need the route 03 road.</span>
+            <span>Board at the provincial hospital, or flag the bus at Ng&#7885;c Xu&#226;n.</span>
             <span class="choice-tag">One bus</span>
           </button>
           <button type="button" class="choice-btn" data-start="corridor" aria-pressed="false">
@@ -1110,7 +1128,9 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
     </div>
 
     <div class="print-only" style="margin-top:16px;padding:14px;border:1px solid #999">
-      <p><b>To the falls:</b> 22.679869, 106.252763 &mdash; by Ph&#7903; S&#224;nh, Ng&#7885;c Xu&#226;n roundabout. Road: QL3 then &#272;T206.</p>
+      <p><b>Falls bus starts:</b> 22.652462, 106.269364 &mdash; provincial hospital.</p>
+      <p><b>Second pickup:</b> 22.679869, 106.252763 &mdash; by Ph&#7903; S&#224;nh, Ng&#7885;c Xu&#226;n roundabout. Road: QL3 then &#272;T206.</p>
+      <p><b>Main gate:</b> 22.851085, 106.728047.</p>
       <p><b>To H&#242;a An:</b> 22.679867, 106.251701 &mdash; far side of the roundabout. Road: &#272;T203.</p>
       <p><b>Last bus from the falls:</b> 17:00. Be at the gate by 16:20.</p>
       <p><b>Operator:</b> 1900 561 562</p>
@@ -1303,6 +1323,14 @@ APP.initMap = function () {
       '<b>Route ' + code + '</b><br>' + r.roadNote + '<br><br>Wave anywhere along this road.'
     );
 
+    var cityLink = (window.BG_ROADS && window.BG_ROADS[code] && window.BG_ROADS[code].cityLink) || null;
+    if (cityLink) {
+      L.polyline(cityLink, {
+        color: r.colour, weight: 4, opacity: 0.8, dashArray: '8 8', lineCap: 'round'
+      }).addTo(g).bindPopup('<b>In-city section</b><br>The bus starts at the provincial ' +
+        'hospital, crosses town and picks up again at Ng&#7885;c Xu&#226;n. Street path indicative.');
+    }
+
     var every = Math.max(2, Math.round(line.length / 14));
     for (var i = 0; i < line.length - 1; i += every) {
       var a = line[i], b = line[i + 1];
@@ -1346,6 +1374,8 @@ APP.applyShow = function () {
     if (show === c || show === 'both') {
       if (!APP.map.hasLayer(g)) g.addTo(APP.map);
       pts = pts.concat(APP.lineFor(c));
+      var cl = window.BG_ROADS && window.BG_ROADS[c] && window.BG_ROADS[c].cityLink;
+      if (cl) { pts = pts.concat(cl); }
     } else if (APP.map.hasLayer(g)) {
       APP.map.removeLayer(g);
     }
@@ -1520,6 +1550,7 @@ APP.stepsFor = function (start, dir) {
   var D = APP.d, S = D.stops, out = [];
   var fare = 'Pay about <b>' + D.fare.perLegLabel + '</b> on board.';
   var w03 = APP.gmap([S.ngocxuan.lat, S.ngocxuan.lng], 'walking');
+  var wHosp = APP.gmap([S.hospital.lat, S.hospital.lng], 'walking');
   var w02 = APP.gmap([S.ngocxuanReturn.lat, S.ngocxuanReturn.lng], 'walking');
 
   if (dir === 'out') {
@@ -1533,12 +1564,12 @@ APP.stepsFor = function (start, dir) {
         text: 'Walk 30 m forward to <b>Ph&#7903; S&#224;nh</b>.',
         tags: [{ t: 'Change bus', k: 'warn' }], link: w03 });
     } else {
-      out.push({ title: 'Get to QL3',
-        text: 'Use the map above, or go to the roundabout by the bus station, 2 km north of the centre.',
-        tags: [{ t: 'QL3' }], link: w03 });
-      out.push({ title: 'Find a clear roadside',
-        text: 'By <b>Ph&#7903; S&#224;nh</b>, or any wide verge. Face the traffic leaving town.',
-        tags: [{ t: 'Photo below', k: 'pin' }] });
+      out.push({ title: 'Go to the provincial hospital',
+        text: 'The falls bus starts there, so you get a seat. Straight through to the main gate.',
+        tags: [{ t: 'Start of the line', k: 'pin' }], link: wHosp });
+      out.push({ title: 'Or catch it at Ng&#7885;c Xu&#226;n',
+        text: 'Closer to most rooms. Wait by <b>Ph&#7903; S&#224;nh</b>, facing the traffic leaving town.',
+        tags: [{ t: 'Photo below', k: 'pin' }], link: w03 });
     }
     out.push({ title: 'Wave at bus 03',
       text: 'Look for <b>03</b> on the windscreen. Miss it and wait 30&ndash;40 minutes.',
@@ -1549,8 +1580,8 @@ APP.stepsFor = function (start, dir) {
     out.push({ title: 'Ride two hours',
       text: 'QL3 to Qu&#7843;ng Uy&#234;n, then &#272;T206 through Tr&#249;ng Kh&#225;nh.',
       tags: [{ t: '86.8 km' }] });
-    out.push({ title: 'Get off at the gate',
-      text: 'Route 03 ends there. Buy your entry ticket at the gate. <b>Check the time.</b>',
+    out.push({ title: 'Get off at the main gate',
+      text: 'The bus ends in the car park there. Buy your entry ticket at the gate. <b>Check the time.</b>',
       tags: [{ t: 'Arrived', k: 'pin' }] });
   } else {
     out.push({ title: 'Be at the gate by 16:20',

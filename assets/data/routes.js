@@ -6,7 +6,7 @@
    precomputed from OSRM routing, so they follow the real tarmac
    and should not be hand-edited.
 
-   Town coordinates below come from their Google Maps pins.
+   Town and stop coordinates come from their Google Maps pins.
    ============================================================ */
 window.BG = {
 
@@ -38,10 +38,10 @@ window.BG = {
       title: "Cao B\u1EB1ng \u2014 B\u1EA3n Gi\u1ED1c",
       short: "To the waterfall",
       roads: "QL3, then \u0110T206",
-      roadNote: "QL3 to Qu\u1EA3ng Uy\u00EAn, then \u0110T206 to the falls.",
+      roadNote: "Starts at the provincial hospital, crosses town, then QL3 to Qu\u1EA3ng Uy\u00EAn and \u0110T206 to the falls. No change of bus.",
       km: 86.8,
       hours: "~2 hrs",
-      outLabel: "From Cao B\u1EB1ng",
+      outLabel: "From the hospital",
       backLabel: "From the falls",
       outDirection: "Stand where cars go <b>away from the city</b>.",
       backDirection: "Stand where cars go <b>towards Cao B\u1EB1ng</b>.",
@@ -50,16 +50,16 @@ window.BG = {
       back:["5:05","5:35","6:10","6:45","7:25","8:00","8:35","9:15","9:55","10:30",
             "11:05","11:45","12:30","13:10","13:50","14:30","15:10","15:45","16:20","17:00"],
       towns: [
-        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "By the bus station. Easiest start.",
-          anchor: true, road: "the station road" },
-        { name: "Cao B\u1EB1ng centre", note: "The bus passes through town.",
-          lat: 22.666, lng: 106.2575, road: "QL3" },
+        { name: "Provincial hospital", note: "Start of the line. Board here for a seat.",
+          lat: 22.652462, lng: 106.269364, anchor: true, road: "city streets" },
+        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "Second pickup, by the bus station.",
+          lat: 22.679869, lng: 106.252763, anchor: true, road: "QL3" },
         { name: "Qu\u1EA3ng Uy\u00EAn", note: "Turns north onto \u0110T206.",
           lat: 22.6966395, lng: 106.4412868, road: "\u0110T206" },
         { name: "Tr\u00F9ng Kh\u00E1nh", note: "Last town before the falls.",
           lat: 22.8351068, lng: 106.5247732, road: "\u0110T206" },
-        { name: "B\u1EA3n Gi\u1ED1c falls", note: "End of the line. Entrance gate.",
-          lat: 22.8523, lng: 106.7235, terminus: true }
+        { name: "B\u1EA3n Gi\u1ED1c \u2014 main gate", note: "End of the line. Buses wait in the car park.",
+          lat: 22.8510852, lng: 106.7280468, terminus: true }
       ]
     },
     "02": {
@@ -68,7 +68,7 @@ window.BG = {
       title: "Cao B\u1EB1ng \u2014 S\u00F3c Giang",
       short: "H\u00F2a An line",
       roads: "\u0110T203",
-      roadNote: "T\u1EC9nh l\u1ED9 203 north-west through N\u01B0\u1EDBc Hai to S\u00F3c Giang.",
+      roadNote: "T\u1EC9nh l\u1ED9 203 north-west through N\u01B0\u1EDBc Hai to S\u00F3c Giang. Only useful if you stay out that way.",
       km: 53,
       hours: "~1 hr 15",
       outLabel: "From Cao B\u1EB1ng",
@@ -90,12 +90,19 @@ window.BG = {
     }
   },
 
-  /* Confirmed waiting points. */
+  /* Confirmed boarding points, from Google Maps pins. */
   stops: {
+    hospital: {
+      id: "hospital",
+      name: "Provincial hospital \u2014 start of the line",
+      short: "Hospital (start)",
+      note: "The falls bus starts here, so you get a seat. Ask for Th\u00E1c B\u1EA3n Gi\u1ED1c.",
+      lat: 22.652462, lng: 106.269364
+    },
     ngocxuan: {
       id: "ngocxuan",
-      name: "Ng\u1ECDc Xu\u00E2n \u2014 to the falls",
-      short: "To the falls",
+      name: "Ng\u1ECDc Xu\u00E2n \u2014 second pickup",
+      short: "Ng\u1ECDc Xu\u00E2n",
       note: "Roadside by Ph\u1EDF S\u00E0nh, next to the bus station.",
       lat: 22.679869, lng: 106.252763,
       photo: "assets/photos/transfer-point.png"
@@ -104,9 +111,16 @@ window.BG = {
       id: "ngocxuanReturn",
       name: "Ng\u1ECDc Xu\u00E2n \u2014 to H\u00F2a An",
       short: "To H\u00F2a An",
-      note: "Far side of the roundabout, by the bridge.",
+      note: "Far side of the roundabout, by the bridge. Route 02 only.",
       lat: 22.679867, lng: 106.251701,
       photo: "assets/photos/return-stop.jpg"
+    },
+    gate: {
+      id: "gate",
+      name: "B\u1EA3n Gi\u1ED1c \u2014 main gate",
+      short: "Main gate",
+      note: "End of the line. Buses back to the city leave from this car park.",
+      lat: 22.8510852, lng: 106.7280468
     }
   },
 
