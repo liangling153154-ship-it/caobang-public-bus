@@ -1,0 +1,9 @@
+# Open Design workspace scaffolding — not part of the site
+.od-frames/
+.od-skills/
+*.artifact.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+.file-versions/
