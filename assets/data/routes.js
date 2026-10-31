@@ -1,10 +1,12 @@
 /* ============================================================
    Cao Bang bus guide — all editable data.
-   Change times, fares, stops or the drawn route lines here.
+   Change times, fares, stops and town pins here.
 
-   geometry[] = the road the bus drives, as [lat, lng].
-   Plotted by hand from landmarks, not a GPS trace. If a stretch
-   looks wrong on the map, edit the numbers and it redraws.
+   The road lines drawn on the map live in roads.js. They were
+   precomputed from OSRM routing, so they follow the real tarmac
+   and should not be hand-edited.
+
+   Town coordinates below come from their Google Maps pins.
    ============================================================ */
 window.BG = {
 
@@ -16,6 +18,8 @@ window.BG = {
 
   /* Replace with your own address before publishing. */
   contactEmail: "you@example.com",
+
+  cityCenter: [22.666, 106.2575],
 
   fare: {
     perLegLabel: "80.000\u20AB",
@@ -46,21 +50,16 @@ window.BG = {
       back:["5:05","5:35","6:10","6:45","7:25","8:00","8:35","9:15","9:55","10:30",
             "11:05","11:45","12:30","13:10","13:50","14:30","15:10","15:45","16:20","17:00"],
       towns: [
-        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "By the bus station. Easiest start.", anchor: true, road: "the station road" },
-        { name: "Cao B\u1EB1ng centre", note: "The bus passes through town.", road: "QL3" },
-        { name: "Qu\u1EA3ng Uy\u00EAn", note: "Turns north onto \u0110T206.", road: "\u0110T206" },
-        { name: "Th\u00F4ng H\u1EC1", note: "Village on \u0110T206.", road: "\u0110T206" },
-        { name: "Tr\u00F9ng Kh\u00E1nh", note: "Last town before the falls.", road: "\u0110T206" },
-        { name: "B\u1EA3n Gi\u1ED1c falls", note: "End of the line. Entrance gate.", terminus: true }
-      ],
-      geometry: [
-        [22.6799,106.2528],[22.6760,106.2560],[22.6700,106.2588],[22.6657,106.2581],
-        [22.6612,106.2640],[22.6560,106.2790],[22.6520,106.2980],[22.6490,106.3180],
-        [22.6520,106.3390],[22.6580,106.3620],[22.6650,106.3880],[22.6700,106.4080],
-        [22.6744,106.4306],[22.6900,106.4480],[22.7120,106.4680],[22.7380,106.4870],
-        [22.7620,106.5050],[22.7880,106.5230],[22.8080,106.5400],[22.8243,106.5595],
-        [22.8320,106.5830],[22.8380,106.6080],[22.8420,106.6350],[22.8470,106.6620],
-        [22.8500,106.6900],[22.8536,106.7236]
+        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "By the bus station. Easiest start.",
+          anchor: true, road: "the station road" },
+        { name: "Cao B\u1EB1ng centre", note: "The bus passes through town.",
+          lat: 22.666, lng: 106.2575, road: "QL3" },
+        { name: "Qu\u1EA3ng Uy\u00EAn", note: "Turns north onto \u0110T206.",
+          lat: 22.6966395, lng: 106.4412868, road: "\u0110T206" },
+        { name: "Tr\u00F9ng Kh\u00E1nh", note: "Last town before the falls.",
+          lat: 22.8351068, lng: 106.5247732, road: "\u0110T206" },
+        { name: "B\u1EA3n Gi\u1ED1c falls", note: "End of the line. Entrance gate.",
+          lat: 22.8523, lng: 106.7235, terminus: true }
       ]
     },
     "02": {
@@ -82,15 +81,11 @@ window.BG = {
             "12:15","13:00","13:45","14:30","15:10","15:50","16:30","17:10"],
       towns: [
         { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "Same roundabout, other side.", anchor: true },
-        { name: "N\u01B0\u1EDBc Hai", note: "Main town of H\u00F2a An." },
-        { name: "H\u00E0 Qu\u1EA3ng", note: "District centre." },
+        { name: "N\u01B0\u1EDBc Hai", note: "Main town of H\u00F2a An.",
+          lat: 22.7377463, lng: 106.1527843 },
+        { name: "H\u00E0 Qu\u1EA3ng", note: "District seat at Xu\u00E2n H\u00F2a.",
+          lat: 22.9017851, lng: 106.0777214 },
         { name: "S\u00F3c Giang", note: "End of the line. Border gate.", terminus: true }
-      ],
-      geometry: [
-        [22.6799,106.2528],[22.6880,106.2420],[22.7020,106.2300],[22.7180,106.2160],
-        [22.7350,106.2000],[22.7520,106.1770],[22.7700,106.1550],[22.7900,106.1330],
-        [22.8080,106.1130],[22.8180,106.1000],[22.8380,106.0800],[22.8600,106.0620],
-        [22.8800,106.0450],[22.8980,106.0300]
       ]
     }
   },
@@ -103,8 +98,7 @@ window.BG = {
       short: "To the falls",
       note: "Roadside by Ph\u1EDF S\u00E0nh, next to the bus station.",
       lat: 22.679869, lng: 106.252763,
-      photo: "assets/photos/transfer-point.png",
-      photoW: 1024, photoH: 514
+      photo: "assets/photos/transfer-point.png"
     },
     ngocxuanReturn: {
       id: "ngocxuanReturn",
@@ -112,8 +106,7 @@ window.BG = {
       short: "To H\u00F2a An",
       note: "Far side of the roundabout, by the bridge.",
       lat: 22.679867, lng: 106.251701,
-      photo: "assets/photos/return-stop.jpg",
-      photoW: 1384, photoH: 832
+      photo: "assets/photos/return-stop.jpg"
     }
   },
 

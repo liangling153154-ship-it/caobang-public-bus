@@ -1,0 +1,93 @@
+/* =====================================================================
+   CAO BANG BUS GUIDE — SERVICE WORKER
+   ---------------------------------------------------------------------
+   Borrowed from the Cao Bang Super Map project and trimmed to this page.
+   Travellers lose signal in the valleys, so:
+     - map tiles (Esri / OpenTopoMap): cache-first, kept forever. Once a
+       tile has been seen it never downloads again, even offline.
+     - local photos: cache-first; they never change in place.
+     - local html/js: network-first with cache fallback, so edits show up
+       at once online and the page still opens offline.
+   Bump VERSION to invalidate everything after a big change.
+   Needs https or localhost; silently skipped on file://.
+   ===================================================================== */
+"use strict";
+
+var VERSION = "cbbus-v1";
+var TILE_CACHE = VERSION + "-tiles";
+var ASSET_CACHE = VERSION + "-assets";
+
+var TILE_HOSTS = [
+  "server.arcgisonline.com",
+  "tile.opentopomap.org",
+  "tile.openstreetmap.org",
+  "unpkg.com",
+  "fonts.googleapis.com",
+  "fonts.gstatic.com"
+];
+
+self.addEventListener("install", function () {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.map(function (k) {
+        if (k.indexOf(VERSION) !== 0) { return caches.delete(k); }
+      }));
+    }).then(function () { return self.clients.claim(); })
+  );
+});
+
+function cacheFirst(req, cacheName) {
+  return caches.open(cacheName).then(function (cache) {
+    return cache.match(req, { ignoreVary: true }).then(function (hit) {
+      if (hit) { return hit; }
+      return fetch(req).then(function (res) {
+        if (res && (res.status === 200 || res.type === "opaque")) {
+          cache.put(req, res.clone());
+        }
+        return res;
+      });
+    });
+  });
+}
+
+function networkFirst(req, cacheName) {
+  return caches.open(cacheName).then(function (cache) {
+    return fetch(req).then(function (res) {
+      if (res && res.status === 200) { cache.put(req, res.clone()); }
+      return res;
+    }).catch(function () {
+      return cache.match(req, { ignoreVary: true }).then(function (hit) {
+        if (hit) { return hit; }
+        throw new Error("offline and not cached: " + req.url);
+      });
+    });
+  });
+}
+
+self.addEventListener("fetch", function (e) {
+  var req = e.request;
+  if (req.method !== "GET") { return; }
+
+  var url;
+  try { url = new URL(req.url); } catch (err) { return; }
+
+  if (TILE_HOSTS.indexOf(url.hostname) !== -1) {
+    e.respondWith(cacheFirst(req, TILE_CACHE));
+    return;
+  }
+
+  if (url.origin !== self.location.origin) { return; }
+
+  if (/\.(png|jpe?g|webp|avif|svg|mp4)$/i.test(url.pathname)) {
+    e.respondWith(cacheFirst(req, ASSET_CACHE));
+    return;
+  }
+
+  if (/\.(html?|js|css|json)$/i.test(url.pathname) || url.pathname.endsWith("/")) {
+    e.respondWith(networkFirst(req, ASSET_CACHE));
+  }
+});

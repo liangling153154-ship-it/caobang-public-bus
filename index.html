@@ -724,6 +724,11 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
           <button type="button" class="btn btn-jade btn-sm" id="locBtn">Road near me</button>
           <button type="button" class="btn btn-quiet btn-sm btn-tap" id="tapBtn" aria-pressed="false">Tap my spot</button>
         </div>
+        <div class="seg" id="baseSeg" role="group" aria-label="Map style" style="justify-self:start">
+          <button type="button" class="seg-btn" data-base="streets" aria-pressed="true">Streets</button>
+          <button type="button" class="seg-btn" data-base="satellite" aria-pressed="false">Satellite</button>
+          <button type="button" class="seg-btn" data-base="terrain" aria-pressed="false">Terrain</button>
+        </div>
       </div>
 
       <div id="busmap" role="application" aria-label="Map of the two bus roads"></div>
@@ -749,9 +754,10 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
           <span>&#9654; Away from city</span>
         </div>
         <p class="map-note">
-          Road names are right: QL3 then &#272;T206 for route 03, t&#7927;nh l&#7897; 203 for
-          route 02. The bands are drawn by hand, so they can sit slightly off the tarmac.
-          Use the Google&nbsp;Maps buttons for real walking directions.
+          Route 03 follows QL3 then &#272;T206, traced from road routing data, so the band
+          sits on the real tarmac. Route 02 follows t&#7927;nh l&#7897; 203; the bus carries
+          on to S&#243;c Giang past the end of the line shown. Tiles are cached after the
+          first view, so the map still opens with no signal.
         </p>
       </div>
     </div>
@@ -1094,6 +1100,7 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
     <p class="sec-label">Offline</p>
     <h2>Before you lose signal</h2>
     <ul style="margin-top:14px;display:grid;gap:8px;font-size:.94rem;color:var(--body);max-width:52ch">
+      <li>&bull; Open the map once while you have wifi. Tiles stay cached.</li>
       <li>&bull; Screenshot the phrase cards.</li>
       <li>&bull; Save both stops in Google Maps.</li>
       <li>&bull; Remember one time: <b>17:00</b>.</li>
@@ -1154,12 +1161,13 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/data/roads.js"></script>
 <script src="assets/data/routes.js"></script>
 <script>
 /* ---------- state + helpers ---------- */
 var APP = {
   d: window.BG,
-  state: { start: 'city', dir: 'out', nowMin: 0, route: '03', show: '03', tapMode: false, phrase: 0, manual: false },
+  state: { start: 'city', dir: 'out', nowMin: 0, route: '03', show: '03', tapMode: false, phrase: 0, manual: false, base: 'streets' },
   map: null, layers: {}, hereLayer: null, lastTrigger: null,
   el: function (id) { return document.getElementById(id); },
   toMin: function (t) { var p = String(t).split(':'); return (+p[0]) * 60 + (+p[1]); },
@@ -1279,29 +1287,35 @@ APP.initMap = function () {
   var map = L.map(holder, { scrollWheelZoom: false, zoomControl: true });
   APP.map = map;
 
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
+  APP.applyBase(map, APP.state.base);
 
   ['03', '02'].forEach(function (code) {
-    var r = APP.d.routes[code], g = L.layerGroup();
+    var r = APP.d.routes[code], g = L.layerGroup(), line = APP.lineFor(code);
 
-    L.polyline(r.geometry, {
+    L.polyline(line, {
       color: r.colour, weight: 18, opacity: 0.2,
       lineCap: 'round', lineJoin: 'round', interactive: false
     }).addTo(g);
 
-    L.polyline(r.geometry, {
+    L.polyline(line, {
       color: r.colour, weight: 5, opacity: 0.95, lineCap: 'round', lineJoin: 'round'
     }).addTo(g).bindPopup(
       '<b>Route ' + code + '</b><br>' + r.roadNote + '<br><br>Wave anywhere along this road.'
     );
 
-    for (var i = 0; i < r.geometry.length - 1; i += 2) {
-      var a = r.geometry[i], b = r.geometry[i + 1];
+    var every = Math.max(2, Math.round(line.length / 14));
+    for (var i = 0; i < line.length - 1; i += every) {
+      var a = line[i], b = line[i + 1];
       APP.arrowMarker([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], APP.bearing(a, b), r.colour).addTo(g);
     }
+
+    (r.towns || []).forEach(function (t) {
+      if (!t.lat || !t.lng) return;
+      L.circleMarker([t.lat, t.lng], {
+        radius: 5, color: '#ffffff', weight: 2, fillColor: '#141A18', fillOpacity: 0.92
+      }).bindTooltip(t.name, { direction: 'top' }).addTo(g);
+    });
+
     APP.layers[code] = g;
   });
 
@@ -1331,7 +1345,7 @@ APP.applyShow = function () {
     if (!g) return;
     if (show === c || show === 'both') {
       if (!APP.map.hasLayer(g)) g.addTo(APP.map);
-      pts = pts.concat(APP.d.routes[c].geometry);
+      pts = pts.concat(APP.lineFor(c));
     } else if (APP.map.hasLayer(g)) {
       APP.map.removeLayer(g);
     }
@@ -1379,12 +1393,71 @@ APP.drawHere = function (pt, snap, colour) {
 };
 </script>
 <script>
+/* ---------- basemaps + road geometry ----------
+   Basemap stack and the keyless Esri choice are borrowed from the
+   Cao Bang Super Map project. CARTO is deliberately not used: since
+   Aug 2026 it watermarks tiles served without an API key.            */
+APP.BASES = {
+  streets: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    labels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+    maxNativeZoom: 16,
+    attribution: 'Map &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+  },
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    labels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    maxNativeZoom: 18,
+    attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics'
+  },
+  terrain: {
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    subdomains: 'abc',
+    maxNativeZoom: 17,
+    attribution: '&copy; OpenStreetMap, SRTM &middot; &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+  }
+};
+
+APP.applyBase = function (map, key) {
+  var src = APP.BASES[key] || APP.BASES.streets;
+  if (APP.baseLayers) {
+    APP.baseLayers.forEach(function (l) { if (map.hasLayer(l)) map.removeLayer(l); });
+  }
+  APP.baseLayers = [];
+  function add(url, attribution) {
+    var l = L.tileLayer(url, {
+      attribution: attribution || '',
+      subdomains: src.subdomains || 'abc',
+      maxZoom: 19,
+      maxNativeZoom: src.maxNativeZoom,
+      keepBuffer: 4,
+      updateWhenIdle: false,
+      crossOrigin: true
+    });
+    l.addTo(map);
+    APP.baseLayers.push(l);
+  }
+  add(src.url, src.attribution);
+  if (src.labels) add(src.labels, '');
+  APP.state.base = key;
+};
+
+/* The drawn road comes from roads.js (OSRM-derived). Falls back to any
+   geometry left in routes.js. */
+APP.lineFor = function (code) {
+  var R = window.BG_ROADS;
+  if (R && R[code] && R[code].line && R[code].line.length) { return R[code].line; }
+  var r = APP.d && APP.d.routes[code];
+  return (r && r.geometry) || [];
+};
+</script>
+<script>
 APP.usePoint = function (pt) {
   if (!APP.d) return;
   var codes = (APP.state.show === 'both') ? ['03', '02'] : [APP.state.show];
   var best = null;
   codes.forEach(function (c) {
-    var n = APP.nearestOnRoute(pt, APP.d.routes[c].geometry);
+    var n = APP.nearestOnRoute(pt, APP.lineFor(c));
     if (!best || n.dist < best.dist) { n.code = c; best = n; }
   });
   var r = APP.d.routes[best.code];
@@ -1834,6 +1907,18 @@ APP.stepPhrase = function (delta) {
       navigator.clipboard.writeText(txt).then(function () { finish(true); }, function () { finish(false); });
     } else { finish(false); }
   });
+
+  var baseSeg = APP.el('baseSeg');
+  if (baseSeg) baseSeg.addEventListener('click', function (e) {
+    var b = closestEl(e.target, '.seg-btn');
+    if (!b || !APP.map) return;
+    press(baseSeg, 'data-base', b.getAttribute('data-base'));
+    APP.applyBase(APP.map, b.getAttribute('data-base'));
+  });
+
+  if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  }
 
   setInterval(function () {
     if (APP.state.manual) return;
