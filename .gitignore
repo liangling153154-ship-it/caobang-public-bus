@@ -7,3 +7,7 @@
 .DS_Store
 Thumbs.db
 .file-versions/
+
+# scratch patch scripts
+.p*.js
+.patch*.js
