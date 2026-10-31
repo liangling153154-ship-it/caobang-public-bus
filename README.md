@@ -8,19 +8,19 @@ Open `index.html` directly — no build step, no dependencies to install.
 
 ## What is on the page
 
-- Both bus routes drawn on the map as road corridors, with
-  direction arrows. You can flag these buses down anywhere along the road.
-- A "road near me" finder: it takes your location (or a tap on the map),
-  finds the nearest point on the route, and hands off to Google Maps for
-  walking directions.
-- Streets / Satellite / Terrain basemaps. Satellite helps you recognise the
-  actual stretch of roadside before you get there.
+- The owner's own Google My Maps, embedded live: both bus routes and the
+  boarding pins. Edit the map in My Maps and this page follows, with no
+  code change. There is also a button to open it in the Google Maps app.
+- A "how far am I from a route" check: it takes your location, measures the
+  nearest point on the route, and hands off to Google Maps for walking
+  directions.
 - A clock check that tells you whether there is still time to get there and back.
 - Full timetable for both routes, both directions.
 - Vietnamese phrase cards to show the conductor.
 - Photographs of the two confirmed waiting points.
-- Offline support: `sw.js` caches map tiles and photos after the first view,
-  so the page still opens where there is no signal. Needs https.
+- Offline support: `sw.js` caches the page, its photos and fonts, so it still
+  opens with no signal. Needs https. The embedded Google map cannot be cached
+  — travellers should download the area in the Google Maps app.
 
 ## Editing the data
 
@@ -33,12 +33,16 @@ Change the numbers there and the page follows. Nothing else hard-codes them.
 | Fare shown on the page | `fare.perLegLabel` |
 | Towns and their map pins | `routes["03"].towns` |
 | "Checked" date in the header | `lastVerifiedLabel` |
-| The road lines on the map | `assets/data/roads.js` |
+| Which My Maps is embedded | `mymap.mid` / `.embed` / `.viewer` |
+| Route lines used for distances | `assets/data/roads.js` |
 
-`roads.js` holds the two drawn corridors, precomputed from OSRM road routing,
-so they sit on the real tarmac. Leave them alone unless a road is rebuilt.
-Route 02 is drawn along ĐT203 as far as Pác Bó; the Sóc Giang bus shares that
-road to Hà Quảng and then branches, so the last stretch is not drawn.
+`roads.js` is a simplified copy (25 m tolerance) of the two route lines from
+the My Maps, used only to measure distances — the visible map is the live
+embed. After redrawing a route in My Maps, re-export its KML and regenerate
+this file, or the distance check will lag behind the map.
+
+The embedded map must stay shared publicly in My Maps, or visitors see
+nothing. Its title shows inside the frame, so give it a real name.
 
 After editing `sw.js`, bump its `VERSION` string or returning visitors keep
 the old cached copy.
@@ -53,12 +57,11 @@ file from disk falls back to tapping the map.
 
 ## Credits
 
-Road geometry, the basemap stack and the service worker are borrowed from the
-Cao Bang Super Map project (Sen's Homestay).
+The route lines come from the owner's Google My Maps. The service worker is
+borrowed from the Cao Bang Super Map project (Sen's Homestay).
 
 Photographs of the stops and the operator's route notices were taken on site.
 Timetable and fares come from Hoa Binh Transport's printed notices and can
-change without notice. Basemaps © Esri, HERE, Garmin, OpenStreetMap contributors; imagery © Esri,
-Maxar, Earthstar Geographics; terrain © OpenTopoMap (CC-BY-SA).
+change without notice. Map © Google.
 
 Not affiliated with Hoa Binh Transport or the Ban Gioc falls management.

@@ -2,11 +2,12 @@
    Cao Bang bus guide — all editable data.
    Change times, fares, stops and town pins here.
 
-   The road lines drawn on the map live in roads.js. They were
-   precomputed from OSRM routing, so they follow the real tarmac
-   and should not be hand-edited.
+   The map on the page is the owner's own Google My Maps, embedded
+   live: edit that map and the page follows, no code change needed.
+   roads.js holds a simplified copy of its two route lines, used only
+   to measure how far you are from a route.
 
-   Town and stop coordinates come from their Google Maps pins.
+   Coordinates below come from the pins on that same My Maps.
    ============================================================ */
 window.BG = {
 
@@ -18,6 +19,13 @@ window.BG = {
 
   /* Replace with your own address before publishing. */
   contactEmail: "you@example.com",
+
+  /* The embedded map. Swap the id to point at a different My Maps. */
+  mymap: {
+    mid: "1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ",
+    embed: "https://www.google.com/maps/d/embed?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ",
+    viewer: "https://www.google.com/maps/d/viewer?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ"
+  },
 
   cityCenter: [22.666, 106.2575],
 
@@ -38,7 +46,7 @@ window.BG = {
       title: "Cao B\u1EB1ng \u2014 B\u1EA3n Gi\u1ED1c",
       short: "To the waterfall",
       roads: "QL3, then \u0110T206",
-      roadNote: "Starts at the provincial hospital, crosses town, then QL3 to Qu\u1EA3ng Uy\u00EAn and \u0110T206 to the falls. No change of bus.",
+      roadNote: "Starts at the provincial hospital, crosses town, then QL3 to Qu\u1EA3ng Uy\u00EAn and \u0110T206 to the main gate. No change of bus.",
       km: 86.8,
       hours: "~2 hrs",
       outLabel: "From the hospital",
@@ -51,15 +59,15 @@ window.BG = {
             "11:05","11:45","12:30","13:10","13:50","14:30","15:10","15:45","16:20","17:00"],
       towns: [
         { name: "Provincial hospital", note: "Start of the line. Board here for a seat.",
-          lat: 22.652462, lng: 106.269364, anchor: true, road: "city streets" },
+          lat: 22.652442, lng: 106.269266, anchor: true, road: "city streets" },
         { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "Second pickup, by the bus station.",
-          lat: 22.679869, lng: 106.252763, anchor: true, road: "QL3" },
+          lat: 22.679901, lng: 106.252362, anchor: true, road: "QL3" },
         { name: "Qu\u1EA3ng Uy\u00EAn", note: "Turns north onto \u0110T206.",
           lat: 22.6966395, lng: 106.4412868, road: "\u0110T206" },
         { name: "Tr\u00F9ng Kh\u00E1nh", note: "Last town before the falls.",
           lat: 22.8351068, lng: 106.5247732, road: "\u0110T206" },
         { name: "B\u1EA3n Gi\u1ED1c \u2014 main gate", note: "End of the line. Buses wait in the car park.",
-          lat: 22.8510852, lng: 106.7280468, terminus: true }
+          lat: 22.851075, lng: 106.728039, terminus: true }
       ]
     },
     "02": {
@@ -68,10 +76,10 @@ window.BG = {
       title: "Cao B\u1EB1ng \u2014 S\u00F3c Giang",
       short: "H\u00F2a An line",
       roads: "\u0110T203",
-      roadNote: "T\u1EC9nh l\u1ED9 203 north-west through N\u01B0\u1EDBc Hai to S\u00F3c Giang. Only useful if you stay out that way.",
+      roadNote: "Also starts at the provincial hospital, then t\u1EC9nh l\u1ED9 203 north-west through N\u01B0\u1EDBc Hai and H\u00E0 Qu\u1EA3ng to the S\u00F3c Giang border gate.",
       km: 53,
       hours: "~1 hr 15",
-      outLabel: "From Cao B\u1EB1ng",
+      outLabel: "From the hospital",
       backLabel: "From S\u00F3c Giang",
       outDirection: "Stand where cars go <b>away from the city</b>.",
       backDirection: "Stand where cars go <b>towards Cao B\u1EB1ng</b>.",
@@ -80,28 +88,34 @@ window.BG = {
       back:["5:10","5:45","6:25","7:10","7:50","8:30","9:15","10:00","10:40","11:20",
             "12:15","13:00","13:45","14:30","15:10","15:50","16:30","17:10"],
       towns: [
-        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "Same roundabout, other side.", anchor: true },
+        { name: "Provincial hospital", note: "Same start as the falls bus.",
+          lat: 22.652442, lng: 106.269266, anchor: true, road: "city streets" },
+        { name: "\u0110\u01B0\u1EDDng Tr\u00F2n Ng\u1ECDc Xu\u00E2n", note: "Pickup by the bus station.",
+          lat: 22.680003, lng: 106.252307, anchor: true, road: "\u0110T203" },
+        { name: "N\u00E0 C\u00E1p", note: "On the way out of the city.",
+          lat: 22.677284, lng: 106.240304, road: "\u0110T203" },
         { name: "N\u01B0\u1EDBc Hai", note: "Main town of H\u00F2a An.",
-          lat: 22.7377463, lng: 106.1527843 },
-        { name: "H\u00E0 Qu\u1EA3ng", note: "District seat at Xu\u00E2n H\u00F2a.",
-          lat: 22.9017851, lng: 106.0777214 },
-        { name: "S\u00F3c Giang", note: "End of the line. Border gate.", terminus: true }
+          lat: 22.7377463, lng: 106.1527843, road: "\u0110T203" },
+        { name: "Ch\u1EE3 Xu\u00E2n H\u00F2a", note: "H\u00E0 Qu\u1EA3ng district seat.",
+          lat: 22.901750, lng: 106.077912, road: "\u0110T203" },
+        { name: "S\u00F3c Giang border gate", note: "End of the line.",
+          lat: 22.941132, lng: 105.995358, terminus: true }
       ]
     }
   },
 
-  /* Confirmed boarding points, from Google Maps pins. */
+  /* Boarding points, from the pins on the My Maps. */
   stops: {
     hospital: {
       id: "hospital",
-      name: "Provincial hospital \u2014 start of the line",
+      name: "Provincial hospital \u2014 start of both lines",
       short: "Hospital (start)",
-      note: "The falls bus starts here, so you get a seat. Ask for Th\u00E1c B\u1EA3n Gi\u1ED1c.",
-      lat: 22.652462, lng: 106.269364
+      note: "Both buses start here, so you board empty and get a seat.",
+      lat: 22.652442, lng: 106.269266
     },
     ngocxuan: {
       id: "ngocxuan",
-      name: "Ng\u1ECDc Xu\u00E2n \u2014 second pickup",
+      name: "Ng\u1ECDc Xu\u00E2n \u2014 to the falls",
       short: "Ng\u1ECDc Xu\u00E2n",
       note: "Roadside by Ph\u1EDF S\u00E0nh, next to the bus station.",
       lat: 22.679869, lng: 106.252763,
@@ -120,7 +134,7 @@ window.BG = {
       name: "B\u1EA3n Gi\u1ED1c \u2014 main gate",
       short: "Main gate",
       note: "End of the line. Buses back to the city leave from this car park.",
-      lat: 22.8510852, lng: 106.7280468
+      lat: 22.851075, lng: 106.728039
     }
   },
 

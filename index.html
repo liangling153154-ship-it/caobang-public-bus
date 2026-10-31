@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 /* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio, geometry.
    Put this @layer first; product CSS outside the layer wins ordinary layout rules.
@@ -342,16 +341,10 @@ section[id] { scroll-margin-top:64px; }
 .find-row { display:flex; gap:8px; }
 .find-row .btn { flex:1 1 0; min-width:0; padding:0 10px; }
 @media (min-width:900px){ .find-row { justify-content:flex-end; } .find-row .btn { flex:0 0 auto; padding:0 14px; } }
-.btn-tap[aria-pressed="true"] { background:var(--amber-soft); border-color:var(--amber-edge); color:var(--amber); }
 
-#busmap { height:clamp(320px, 58vh, 440px); width:100%; background:var(--surface-2); }
-@media (min-width:1024px){ #busmap { height:520px; } }
-.map-fallback { padding:16px; display:grid; gap:10px; }
-.bus-arrow { display:block; }
-.here-pin { display:block; width:18px; height:18px; border-radius:50%; background:var(--amber); border:3px solid #fff; box-shadow:0 0 0 2px rgba(154,76,6,.55); }
-.leaflet-container { font-family:var(--text); font-size:.88rem; }
-.leaflet-popup-content { margin:11px 13px; line-height:1.5; }
-.leaflet-popup-content b { font-family:var(--display); }
+.map-frame { width:100%; height:clamp(340px, 62vh, 460px); background:var(--surface-2); }
+@media (min-width:1024px){ .map-frame { height:540px; } }
+.map-frame iframe { display:block; width:100%; height:100%; border:0; }
 
 .result { padding:14px 15px; border-top:1px solid var(--line-soft); display:grid; gap:10px; background:var(--jade-soft); }
 .result.is-warn { background:var(--amber-soft); }
@@ -366,10 +359,6 @@ section[id] { scroll-margin-top:64px; }
 @media (min-width:768px){ .result-actions .btn { flex:0 0 auto; } }
 
 .map-foot { padding:12px 15px; border-top:1px solid var(--line-soft); display:grid; gap:8px; }
-.map-legend { display:flex; flex-wrap:wrap; gap:10px 14px; font-size:.79rem; color:var(--muted); }
-.map-legend span { display:inline-flex; align-items:center; gap:6px; }
-.lg-band { width:20px; height:10px; border-radius:3px; flex:none; }
-.lg-dot { width:11px; height:11px; border-radius:50%; flex:none; border:3px solid #fff; box-shadow:0 0 0 1.5px rgba(0,0,0,.25); }
 .map-note { font-size:.77rem; color:var(--muted); line-height:1.55; }
 
 /* ============ stop cards ============ */
@@ -706,38 +695,32 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
 <section class="band" id="map">
   <div class="wrap">
     <p class="sec-label">The map</p>
-    <h2>Which road do I walk to?</h2>
-    <p class="lede">The thick band is the road. Arrows point away from the city.</p>
+    <h2>The two routes on the map</h2>
+    <p class="lede">Our own Google map. Both buses start at the provincial hospital.</p>
 
     <div class="card map-card">
+      <div class="map-frame">
+        <iframe id="mymapFrame" title="Cao Bang bus routes, Google My Maps"
+                src="https://www.google.com/maps/d/embed?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ"
+                loading="lazy" allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+
       <div class="map-bar">
-        <div class="seg" id="routeSeg" role="group" aria-label="Which route to show">
+        <a class="btn btn-jade btn-sm" id="openMapBtn" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/d/viewer?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ">Open in Google Maps</a>
+        <div class="find-row">
+          <button type="button" class="btn btn-quiet btn-sm" id="locBtn">How far am I from a route?</button>
+        </div>
+        <div class="seg" id="routeSeg" role="group" aria-label="Which route to measure" style="justify-self:start">
           <button type="button" class="seg-btn" data-show="03" aria-pressed="true">
             <span class="seg-swatch" style="background:#0B6E5F" aria-hidden="true"></span>Route 03
           </button>
           <button type="button" class="seg-btn" data-show="02" aria-pressed="false">
             <span class="seg-swatch" style="background:#1D4E89" aria-hidden="true"></span>Route 02
           </button>
-          <button type="button" class="seg-btn" data-show="both" aria-pressed="false">Both</button>
+          <button type="button" class="seg-btn" data-show="both" aria-pressed="false">Either</button>
         </div>
-        <div class="find-row">
-          <button type="button" class="btn btn-jade btn-sm" id="locBtn">Road near me</button>
-          <button type="button" class="btn btn-quiet btn-sm btn-tap" id="tapBtn" aria-pressed="false">Tap my spot</button>
-        </div>
-        <div class="seg" id="baseSeg" role="group" aria-label="Map style" style="justify-self:start">
-          <button type="button" class="seg-btn" data-base="streets" aria-pressed="true">Streets</button>
-          <button type="button" class="seg-btn" data-base="satellite" aria-pressed="false">Satellite</button>
-          <button type="button" class="seg-btn" data-base="terrain" aria-pressed="false">Terrain</button>
-        </div>
-      </div>
-
-      <div id="busmap" role="application" aria-label="Map of the two bus roads"></div>
-
-      <div class="map-fallback" id="mapFallback" hidden>
-        <p style="font-size:.92rem;color:var(--muted)">
-          The map needs internet. The route lists below name every town in order.
-        </p>
-        <a class="btn btn-quiet btn-sm" href="#stops" style="justify-self:start">Go to the stops</a>
       </div>
 
       <div class="result" id="result" role="status" aria-live="polite" hidden>
@@ -747,19 +730,11 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
       </div>
 
       <div class="map-foot">
-        <div class="map-legend">
-          <span><span class="lg-band" style="background:#0B6E5F" aria-hidden="true"></span>Route 03</span>
-          <span><span class="lg-band" style="background:#1D4E89" aria-hidden="true"></span>Route 02</span>
-          <span><span class="lg-dot" style="background:#9A4C06" aria-hidden="true"></span>Boarding point</span>
-          <span><span class="lg-band" style="background:repeating-linear-gradient(90deg,#0B6E5F 0 5px,transparent 5px 9px)" aria-hidden="true"></span>City section</span>
-          <span>&#9654; Away from city</span>
-        </div>
         <p class="map-note">
-          Route 03 follows QL3 then &#272;T206, traced from road routing data, so the band
-          sits on the real tarmac. Route 02 follows t&#7927;nh l&#7897; 203; the bus carries
-          on to S&#243;c Giang past the end of the line shown. The dashed loop through town
-          is drawn between the real boarding pins, but its exact streets are not mapped.
-          Tiles are cached after the first view, so the map still opens with no signal.
+          Route 03 runs 87 km to the B&#7843;n Gi&#7889;c main gate. Route 02 runs 53 km
+          north-west to the S&#243;c Giang border gate. On a phone, open the map in the
+          Google&nbsp;Maps app: it knows where you are, and you can download the area for
+          offline use.
         </p>
       </div>
     </div>
@@ -1118,9 +1093,9 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
     <p class="sec-label">Offline</p>
     <h2>Before you lose signal</h2>
     <ul style="margin-top:14px;display:grid;gap:8px;font-size:.94rem;color:var(--body);max-width:52ch">
-      <li>&bull; Open the map once while you have wifi. Tiles stay cached.</li>
+      <li>&bull; Open our map in the Google&nbsp;Maps app, then download Cao B&#7857;ng for offline use.</li>
       <li>&bull; Screenshot the phrase cards.</li>
-      <li>&bull; Save both stops in Google Maps.</li>
+      <li>&bull; Copy the boarding coordinates below.</li>
       <li>&bull; Remember one time: <b>17:00</b>.</li>
     </ul>
     <div class="od-cluster" style="margin-top:16px;--od-gap:9px">
@@ -1180,7 +1155,6 @@ dialog.sheet::backdrop { background:rgba(10,20,18,.64); }
   <a class="btn btn-quiet" href="#map">Road near me</a>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="assets/data/roads.js"></script>
 <script src="assets/data/routes.js"></script>
 <script>
@@ -1279,109 +1253,8 @@ APP.renderDiagram = function () {
 </script>
 <script>
 /* ---------- map ---------- */
-APP.arrowMarker = function (latlng, deg, colour) {
-  return L.marker(latlng, {
-    interactive: false, keyboard: false,
-    icon: L.divIcon({
-      className: '', iconSize: [18, 18], iconAnchor: [9, 9],
-      html: '<svg class="bus-arrow" width="18" height="18" viewBox="0 0 18 18" ' +
-            'style="transform:rotate(' + deg.toFixed(1) + 'deg)" aria-hidden="true">' +
-            '<path d="M9 2 L14.5 14.5 L9 11.4 L3.5 14.5 Z" fill="' + colour +
-            '" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round"/></svg>'
-    })
-  });
-};
 
-APP.initMap = function () {
-  var holder = APP.el('busmap'), fb = APP.el('mapFallback');
-  if (!holder) return;
 
-  if (typeof L === 'undefined' || !APP.d) {
-    holder.hidden = true;
-    if (fb) fb.hidden = false;
-    if (APP.el('locBtn')) APP.el('locBtn').disabled = true;
-    if (APP.el('tapBtn')) APP.el('tapBtn').disabled = true;
-    return;
-  }
-
-  var map = L.map(holder, { scrollWheelZoom: false, zoomControl: true });
-  APP.map = map;
-
-  APP.applyBase(map, APP.state.base);
-
-  ['03', '02'].forEach(function (code) {
-    var r = APP.d.routes[code], g = L.layerGroup(), line = APP.lineFor(code);
-
-    L.polyline(line, {
-      color: r.colour, weight: 18, opacity: 0.2,
-      lineCap: 'round', lineJoin: 'round', interactive: false
-    }).addTo(g);
-
-    L.polyline(line, {
-      color: r.colour, weight: 5, opacity: 0.95, lineCap: 'round', lineJoin: 'round'
-    }).addTo(g).bindPopup(
-      '<b>Route ' + code + '</b><br>' + r.roadNote + '<br><br>Wave anywhere along this road.'
-    );
-
-    var cityLink = (window.BG_ROADS && window.BG_ROADS[code] && window.BG_ROADS[code].cityLink) || null;
-    if (cityLink) {
-      L.polyline(cityLink, {
-        color: r.colour, weight: 4, opacity: 0.8, dashArray: '8 8', lineCap: 'round'
-      }).addTo(g).bindPopup('<b>In-city section</b><br>The bus starts at the provincial ' +
-        'hospital, crosses town and picks up again at Ng&#7885;c Xu&#226;n. Street path indicative.');
-    }
-
-    var every = Math.max(2, Math.round(line.length / 14));
-    for (var i = 0; i < line.length - 1; i += every) {
-      var a = line[i], b = line[i + 1];
-      APP.arrowMarker([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], APP.bearing(a, b), r.colour).addTo(g);
-    }
-
-    (r.towns || []).forEach(function (t) {
-      if (!t.lat || !t.lng) return;
-      L.circleMarker([t.lat, t.lng], {
-        radius: 5, color: '#ffffff', weight: 2, fillColor: '#141A18', fillOpacity: 0.92
-      }).bindTooltip(t.name, { direction: 'top' }).addTo(g);
-    });
-
-    APP.layers[code] = g;
-  });
-
-  var pins = L.layerGroup();
-  Object.keys(APP.d.stops).forEach(function (k) {
-    var s = APP.d.stops[k];
-    L.circleMarker([s.lat, s.lng], {
-      radius: 9, color: '#ffffff', weight: 3, fillColor: '#9A4C06', fillOpacity: 1
-    }).bindPopup(
-      '<b>' + s.name + '</b><br>' + s.note + '<br>' + s.lat + ', ' + s.lng +
-      '<br><a href="' + APP.gmap([s.lat, s.lng], 'walking') + '" target="_blank" rel="noopener">Walk here</a>'
-    ).bindTooltip(s.short || s.name, { direction: 'top' }).addTo(pins);
-  });
-  pins.addTo(map);
-  APP.layers.pins = pins;
-
-  APP.applyShow();
-  map.on('click', function (e) { APP.onMapClick(e); });
-  setTimeout(function () { map.invalidateSize(); }, 160);
-};
-
-APP.applyShow = function () {
-  if (!APP.map) return;
-  var show = APP.state.show, pts = [];
-  ['03', '02'].forEach(function (c) {
-    var g = APP.layers[c];
-    if (!g) return;
-    if (show === c || show === 'both') {
-      if (!APP.map.hasLayer(g)) g.addTo(APP.map);
-      pts = pts.concat(APP.lineFor(c));
-      var cl = window.BG_ROADS && window.BG_ROADS[c] && window.BG_ROADS[c].cityLink;
-      if (cl) { pts = pts.concat(cl); }
-    } else if (APP.map.hasLayer(g)) {
-      APP.map.removeLayer(g);
-    }
-  });
-  if (pts.length) APP.map.fitBounds(L.latLngBounds(pts), { padding: [26, 26] });
-};
 
 /* ---------- find the road near a point ---------- */
 APP.setResult = function (kind, big, html, actions) {
@@ -1403,74 +1276,13 @@ APP.setResult = function (kind, big, html, actions) {
   });
 };
 
-APP.drawHere = function (pt, snap, colour) {
-  if (!APP.map) return;
-  if (APP.hereLayer) { APP.map.removeLayer(APP.hereLayer); APP.hereLayer = null; }
-  var g = L.layerGroup();
-  L.marker(pt, {
-    interactive: false, keyboard: false,
-    icon: L.divIcon({ className: '', iconSize: [18, 18], iconAnchor: [9, 9], html: '<span class="here-pin"></span>' })
-  }).addTo(g);
-  L.polyline([pt, [snap.lat, snap.lng]], {
-    color: '#9A4C06', weight: 3, dashArray: '6 7', opacity: 0.9, interactive: false
-  }).addTo(g);
-  L.circleMarker([snap.lat, snap.lng], {
-    radius: 8, color: '#ffffff', weight: 3, fillColor: colour, fillOpacity: 1
-  }).addTo(g).bindTooltip('Walk to here', { direction: 'top' });
-  g.addTo(APP.map);
-  APP.hereLayer = g;
-  APP.map.fitBounds(L.latLngBounds([pt, [snap.lat, snap.lng]]).pad(0.45), { maxZoom: 16 });
-};
 </script>
 <script>
 /* ---------- basemaps + road geometry ----------
    Basemap stack and the keyless Esri choice are borrowed from the
    Cao Bang Super Map project. CARTO is deliberately not used: since
    Aug 2026 it watermarks tiles served without an API key.            */
-APP.BASES = {
-  streets: {
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    labels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-    maxNativeZoom: 16,
-    attribution: 'Map &copy; Esri, HERE, Garmin, OpenStreetMap contributors'
-  },
-  satellite: {
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    labels: 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-    maxNativeZoom: 18,
-    attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics'
-  },
-  terrain: {
-    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    subdomains: 'abc',
-    maxNativeZoom: 17,
-    attribution: '&copy; OpenStreetMap, SRTM &middot; &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-  }
-};
 
-APP.applyBase = function (map, key) {
-  var src = APP.BASES[key] || APP.BASES.streets;
-  if (APP.baseLayers) {
-    APP.baseLayers.forEach(function (l) { if (map.hasLayer(l)) map.removeLayer(l); });
-  }
-  APP.baseLayers = [];
-  function add(url, attribution) {
-    var l = L.tileLayer(url, {
-      attribution: attribution || '',
-      subdomains: src.subdomains || 'abc',
-      maxZoom: 19,
-      maxNativeZoom: src.maxNativeZoom,
-      keepBuffer: 4,
-      updateWhenIdle: false,
-      crossOrigin: true
-    });
-    l.addTo(map);
-    APP.baseLayers.push(l);
-  }
-  add(src.url, src.attribution);
-  if (src.labels) add(src.labels, '');
-  APP.state.base = key;
-};
 
 /* The drawn road comes from roads.js (OSRM-derived). Falls back to any
    geometry left in routes.js. */
@@ -1491,44 +1303,35 @@ APP.usePoint = function (pt) {
     if (!best || n.dist < best.dist) { n.code = c; best = n; }
   });
   var r = APP.d.routes[best.code];
-  var anchor = APP.d.stops.ngocxuan;
-  if (APP.map) APP.drawHere(pt, best, r.colour);
+  var anchor = APP.d.stops.hospital;
 
   if (best.dist <= 2500) {
     APP.setResult('', APP.metres(best.dist) + ' away',
       'A <b>' + APP.walkMin(best.dist) + ' minute walk</b> to the route ' + best.code +
       ' road (' + r.roads + '). Stand where cars go away from the city, then raise your arm.',
       [{ label: 'Walk there', href: APP.gmap([best.lat, best.lng], 'walking', pt), blank: true, primary: true },
-       { label: 'Known stop', href: '#stops' }]);
+       { label: 'Boarding points', href: '#stops' }]);
   } else if (best.dist <= 15000) {
     APP.setResult('warn', APP.metres(best.dist) + ' away',
       'Too far to walk. Take a motorbike taxi to this point on the route ' + best.code +
       ' road (' + r.roads + '), or start from the roundabout by the bus station.',
       [{ label: 'Directions', href: APP.gmap([best.lat, best.lng], 'driving', pt), blank: true, primary: true },
-       { label: 'Known stop', href: '#stops' }]);
+       { label: 'Boarding points', href: '#stops' }]);
   } else {
     APP.setResult('warn', APP.metres(best.dist) + ' from the route',
-      'Both routes start at <b>Ng&#7885;c Xu&#226;n roundabout</b>, by the Cao B&#7857;ng bus station. Get into the city first.',
-      [{ label: 'Go to the roundabout', href: APP.gmap([anchor.lat, anchor.lng], 'driving', pt), blank: true, primary: true },
-       { label: 'See the photo', href: '#stops' }]);
+      'Both buses start at the <b>provincial hospital</b> in Cao B&#7857;ng. Get into the city first.',
+      [{ label: 'Go to the hospital', href: APP.gmap([anchor.lat, anchor.lng], 'driving', pt), blank: true, primary: true },
+       { label: 'Boarding points', href: '#stops' }]);
   }
 };
 
-APP.onMapClick = function (e) {
-  if (!APP.state.tapMode) return;
-  APP.state.tapMode = false;
-  var btn = APP.el('tapBtn');
-  if (btn) { btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Tap my spot'; }
-  if (APP.map) APP.map.getContainer().style.cursor = '';
-  APP.usePoint([e.latlng.lat, e.latlng.lng]);
-};
 
 APP.locate = function () {
   var btn = APP.el('locBtn');
   if (!navigator.geolocation) {
     APP.setResult('error', 'No location',
-      'This browser will not share a location. Tap the map where you are instead.',
-      [{ label: 'Known stop', href: '#stops' }]);
+      'This browser will not share a location. Use the boarding points below instead.',
+      [{ label: 'Boarding points', href: '#stops' }]);
     return;
   }
   var label = btn ? btn.textContent : '';
@@ -1539,8 +1342,8 @@ APP.locate = function () {
   }, function () {
     if (btn) { btn.disabled = false; btn.textContent = label; }
     APP.setResult('error', 'No location shared',
-      'Normal if you declined, or if the page is not on https. Tap the map where you are instead.',
-      [{ label: 'Known stop', href: '#stops' }]);
+      'Normal if you declined, or if the page is not on https. Use the boarding points below instead.',
+      [{ label: 'Boarding points', href: '#stops' }]);
   }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
 };
 </script>
@@ -1828,6 +1631,12 @@ APP.stepPhrase = function (delta) {
     });
   }
 
+  if (D.mymap) {
+    var frame = APP.el('mymapFrame'), openBtn = APP.el('openMapBtn');
+    if (frame && D.mymap.embed) frame.src = D.mymap.embed;
+    if (openBtn && D.mymap.viewer) openBtn.href = D.mymap.viewer;
+  }
+
   if (APP.el('chipDate')) APP.el('chipDate').textContent = D.lastVerifiedLabel;
   if (APP.el('footDate')) APP.el('footDate').textContent = D.lastVerifiedLabel;
 
@@ -1841,7 +1650,6 @@ APP.stepPhrase = function (delta) {
   APP.renderPhrases();
   APP.renderPlanner();
   APP.renderTimetable();
-  APP.initMap();
 
   var startChoice = APP.el('startChoice');
   if (startChoice) startChoice.addEventListener('click', function (e) {
@@ -1867,9 +1675,7 @@ APP.stepPhrase = function (delta) {
     if (!b) return;
     APP.state.show = b.getAttribute('data-show');
     press(routeSeg, 'data-show', APP.state.show);
-    if (APP.hereLayer && APP.map) { APP.map.removeLayer(APP.hereLayer); APP.hereLayer = null; }
     if (APP.el('result')) APP.el('result').hidden = true;
-    APP.applyShow();
   });
 
   var tabs = document.querySelectorAll('.tt-tab');
@@ -1884,14 +1690,6 @@ APP.stepPhrase = function (delta) {
   });
 
   if (APP.el('locBtn')) APP.el('locBtn').addEventListener('click', function () { APP.locate(); });
-
-  var tapBtn = APP.el('tapBtn');
-  if (tapBtn) tapBtn.addEventListener('click', function () {
-    APP.state.tapMode = !APP.state.tapMode;
-    tapBtn.setAttribute('aria-pressed', APP.state.tapMode ? 'true' : 'false');
-    tapBtn.textContent = APP.state.tapMode ? 'Now tap the map' : 'Tap my spot';
-    if (APP.map) APP.map.getContainer().style.cursor = APP.state.tapMode ? 'crosshair' : '';
-  });
 
   if (ti) ti.addEventListener('change', function () {
     if (!ti.value) return;
@@ -1937,14 +1735,6 @@ APP.stepPhrase = function (delta) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(txt).then(function () { finish(true); }, function () { finish(false); });
     } else { finish(false); }
-  });
-
-  var baseSeg = APP.el('baseSeg');
-  if (baseSeg) baseSeg.addEventListener('click', function (e) {
-    var b = closestEl(e.target, '.seg-btn');
-    if (!b || !APP.map) return;
-    press(baseSeg, 'data-base', b.getAttribute('data-base'));
-    APP.applyBase(APP.map, b.getAttribute('data-base'));
   });
 
   if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {

@@ -3,8 +3,10 @@
    ---------------------------------------------------------------------
    Borrowed from the Cao Bang Super Map project and trimmed to this page.
    Travellers lose signal in the valleys, so:
-     - map tiles (Esri / OpenTopoMap): cache-first, kept forever. Once a
-       tile has been seen it never downloads again, even offline.
+     - the map itself is a Google My Maps iframe, which we cannot cache.
+       Travellers should open it in the Google Maps app and download the
+       area there. Everything else on the page works offline.
+     - fonts: cache-first, kept forever.
      - local photos: cache-first; they never change in place.
      - local html/js: network-first with cache fallback, so edits show up
        at once online and the page still opens offline.
@@ -13,15 +15,11 @@
    ===================================================================== */
 "use strict";
 
-var VERSION = "cbbus-v1";
+var VERSION = "cbbus-v2"; // v2: dropped map tiles, the map is now a Google iframe
 var TILE_CACHE = VERSION + "-tiles";
 var ASSET_CACHE = VERSION + "-assets";
 
-var TILE_HOSTS = [
-  "server.arcgisonline.com",
-  "tile.opentopomap.org",
-  "tile.openstreetmap.org",
-  "unpkg.com",
+var CACHE_HOSTS = [
   "fonts.googleapis.com",
   "fonts.gstatic.com"
 ];
@@ -75,7 +73,7 @@ self.addEventListener("fetch", function (e) {
   var url;
   try { url = new URL(req.url); } catch (err) { return; }
 
-  if (TILE_HOSTS.indexOf(url.hostname) !== -1) {
+  if (CACHE_HOSTS.indexOf(url.hostname) !== -1) {
     e.respondWith(cacheFirst(req, TILE_CACHE));
     return;
   }
