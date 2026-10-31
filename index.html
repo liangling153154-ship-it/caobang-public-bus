@@ -38,6 +38,11 @@ section { display:grid; gap:12px; min-width:0; }
 .steps li { display:grid; grid-template-columns:34px 1fr; gap:10px; counter-increment:n; }
 .steps li::before { content:counter(n); width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:var(--jade); color:#fff; font-weight:700; }
 
+.tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.tabs button { min-height:56px; padding:6px; border-radius:12px; border:1.5px solid var(--jade); background:var(--surface); color:var(--jade-dark); line-height:1.25; }
+.tabs b, .tabs span { display:block; }
+.tabs span { font-size:.82rem; }
+.tabs button[aria-pressed="true"] { background:var(--jade); color:#fff; }
 .map { height:min(70vh,520px); min-height:360px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#EAEFED; }
 .map iframe { display:block; width:100%; height:100%; border:0; }
 .btn { display:flex; align-items:center; justify-content:center; min-height:52px; padding:0 16px; border-radius:12px; background:var(--jade); color:#fff; font-weight:700; text-decoration:none; text-align:center; }
@@ -91,12 +96,16 @@ footer { font-size:.86rem; color:var(--muted); }
 
 <section>
   <h2>Where the bus runs</h2>
-  <div class="map"><iframe id="map" title="Map of bus routes 03 and 02" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  <div class="tabs" id="tabs">
+    <button type="button" data-route="03" aria-pressed="true"><b>Bus 03</b><span>To the falls</span></button>
+    <button type="button" data-route="02" aria-pressed="false"><b>Bus 02</b><span>Far from bus 03?</span></button>
+  </div>
+  <div class="map"><iframe id="map" title="Bus route map" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
   <a class="btn" id="mapLink" target="_blank" rel="noopener">Open the map in Google Maps</a>
   <div class="key">
-    <p><b>Bus 03 goes to the falls.</b> Stand on the side going away from the city.</p>
-    <p><b>Hospital to Ngoc Xuan roundabout:</b> buses 03 and 02 use the same road. Take 03.</p>
-    <p class="r2"><b>Far from bus 03?</b> Take bus 02 to Ngoc Xuan roundabout. Change to bus 03 there.</p>
+    <p data-route="03"><b>Bus 03 goes to the falls.</b> Stand on the side going away from the city.</p>
+    <p data-route="03"><b>Hospital to Ngoc Xuan roundabout:</b> buses 03 and 02 use the same road. Take 03.</p>
+    <p class="r2" data-route="02" hidden><b>Far from bus 03?</b> Take bus 02 to Ngoc Xuan roundabout. Change to bus 03 there.</p>
   </div>
 </section>
 
@@ -165,8 +174,17 @@ fillTimes('t03back', D.routes['03'].back, true);
 fillTimes('t02out', D.routes['02'].out, false);
 fillTimes('t02back', D.routes['02'].back, false);
 
-el('map').src = D.mymap.embed;
-el('mapLink').href = D.mymap.viewer;
+function showRoute(code) {
+  el('map').src = 'https://www.google.com/maps/d/embed?hl=en&mid=' + D.maps[code];
+  el('mapLink').href = 'https://www.google.com/maps/d/viewer?hl=en&mid=' + D.maps[code];
+  each('#tabs button', function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-route') === code ? 'true' : 'false'); });
+  each('.key p', function (p) { p.hidden = p.getAttribute('data-route') !== code; });
+}
+showRoute('03');
+el('tabs').addEventListener('click', function (e) {
+  var b = e.target.closest('button');
+  if (b) showRoute(b.getAttribute('data-route'));
+});
 el('phone').textContent = D.operatorPhone;
 el('phone').href = 'tel:' + D.operatorPhone.replace(/\s/g, '');
 el('checked').textContent = D.lastVerifiedLabel;

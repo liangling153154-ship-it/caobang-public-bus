@@ -10,10 +10,10 @@ window.BG = {
   /* One way, city to the falls gate. */
   fare: "110.000₫",
 
-  /* The owner's Google My Maps: route 02 and 03 are separate layers. */
-  mymap: {
-    embed: "https://www.google.com/maps/d/embed?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ",
-    viewer: "https://www.google.com/maps/d/viewer?mid=1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ"
+  /* The owner's Google My Maps ids: one map per route. */
+  maps: {
+    "03": "1GPL_-kdiNvrdkv0_iJ8QQd9Ul59MlLM",
+    "02": "1VqIww3Oqt2cMy54fN9d-G665mQ3-uoc"
   },
 
   routes: {

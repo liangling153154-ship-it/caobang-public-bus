@@ -11,8 +11,8 @@ Open `index.html` directly: no build step, no dependencies.
 The fare, times, phrases and check date live in `assets/data/routes.js`.
 Page text is in `index.html`.
 
-The map is the owner's Google My Maps, with routes 02 and 03 as separate
-layers. Edit it in My Maps and the page follows. It must stay shared publicly.
+The maps are the owner's Google My Maps, one per route (`maps` in `routes.js`).
+Edit them in My Maps and the page follows. They must stay shared publicly.
 
 `sw.js` saves the page for offline use after the first https visit; the map
 needs signal. After changing the photo or file list, bump its `VERSION`.
