@@ -100,7 +100,8 @@ footer { font-size:.86rem; color:var(--muted); }
     <button type="button" data-route="03" aria-pressed="true"><b>Bus 03</b><span>To the falls</span></button>
     <button type="button" data-route="02" aria-pressed="false"><b>Bus 02</b><span>Far from bus 03?</span></button>
   </div>
-  <div class="map"><iframe id="map" title="Bus route map" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  <div class="map"><iframe id="map" title="Bus route map" loading="lazy" allow="geolocation" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  <p>Tap below to see where you are on the map.</p>
   <a class="btn" id="mapLink" target="_blank" rel="noopener">Open the map in Google Maps</a>
   <div class="key">
     <p data-route="03"><b>Bus 03 goes to the falls.</b> Stand on the side going away from the city.</p>
