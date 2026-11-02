@@ -11,8 +11,8 @@ window.BG = {
   fare: "110.000₫",
 
   /* Traveller stories. Leave empty to hide the section. */
-  storiesForm: "",
-  storiesCsv: "",
+  storiesForm: "https://docs.google.com/forms/d/e/1FAIpQLScaZJZPPb_01ZATUUNzEs-8bkfX7VFWqoWjUqVbQdjxNsLGnA/viewform",
+  storiesCsv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSllqJwk4x2KONBeAozj19B7WIuvpcTJBKWxhrjGnyfq5X6LNBrYrSoNF_ua4cQ0wL5vN21d6b61y0w/pub?gid=1616575845&single=true&output=csv",
 
   /* The owner's Google My Maps ids: one map per route. */
   maps: {
