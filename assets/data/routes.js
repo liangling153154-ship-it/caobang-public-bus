@@ -10,6 +10,10 @@ window.BG = {
   /* One way, city to the falls gate. */
   fare: "110.000₫",
 
+  /* Traveller stories. Leave empty to hide the section. */
+  storiesForm: "",
+  storiesCsv: "",
+
   /* The owner's Google My Maps ids: one map per route. */
   maps: {
     "03": "1GPL_-kdiNvrdkv0_iJ8QQd9Ul59MlLM",
