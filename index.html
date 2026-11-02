@@ -91,11 +91,12 @@ footer { font-size:.86rem; color:var(--muted); }
   <p>No bus stop needed. Wave the bus anywhere on its road.</p>
   <ol class="steps">
     <li><span>Find the bus road on the map. Go there.</span></li>
-    <li><span>Stand on the right side of the road, facing your direction.</span></li>
+    <li><span>Stand on the side going to Ngoc Xuan roundabout and Quang Uyen.</span></li>
     <li><span>See bus <b>03</b>? It is yellow and red. Wave your arm.</span></li>
     <li><span>Pay on the bus: <b data-fare></b>, cash only.</span></li>
   </ol>
   <p class="warn"><b>Go early. Do not trust the bus times.</b> Go to the road now and wait. A bus comes every 30–40 minutes.</p>
+  <p class="warn"><b>Leave the city before 12:00.</b> After that you may miss the last bus back.</p>
   <div class="rail">
     <figure><video class="photo" muted loop playsinline preload="none" poster="assets/video/hotel-gate.jpg" width="854" height="480" src="assets/video/hotel-gate.mp4" aria-label="A traveller waits at the roadside and waves as the bus comes."></video><figcaption>Stand at the roadside. Wave.</figcaption></figure>
     <figure><video class="photo" muted loop playsinline preload="none" poster="assets/video/bus-sen.jpg" width="854" height="480" src="assets/video/bus-sen.mp4" aria-label="A traveller on the street as the yellow bus drives towards them."></video><figcaption>The bus comes along the road.</figcaption></figure>
@@ -114,7 +115,7 @@ footer { font-size:.86rem; color:var(--muted); }
   <p>Tap below to see where you are on the map.</p>
   <a class="btn" id="mapLink" target="_blank" rel="noopener">Open the map in Google Maps</a>
   <div class="key">
-    <p data-route="03"><b>Bus 03 goes to the falls.</b> Stand on the side going away from the city.</p>
+    <p data-route="03"><b>Bus 03 goes to the falls.</b> In the city, stand on the side going to Ngoc Xuan roundabout. After the roundabout, the side going to Quang Uyen.</p>
     <p data-route="03"><b>Hospital to Ngoc Xuan roundabout:</b> buses 03 and 02 use the same road. Take 03.</p>
     <p class="r2" data-route="02" hidden><b>Far from bus 03?</b> Take bus 02 to Ngoc Xuan roundabout. Change to bus 03 there.</p>
     <figure data-route="02" hidden><img class="photo" src="assets/photos/ngoc-xuan.jpg" width="1024" height="514" loading="lazy" alt="Ngoc Xuan roundabout. A traveller waits in front of Pho Sanh as bus 03 comes."><figcaption>Ngoc Xuan roundabout: wait here for bus 03.</figcaption></figure>
@@ -127,7 +128,6 @@ footer { font-size:.86rem; color:var(--muted); }
   <p class="warn">The bus <b>starts</b> at these times. It comes to you later.</p>
   <div><h3>Bus 03: from the hospital</h3><div class="times" id="t03out"></div></div>
   <div><h3>Bus 03: from the falls</h3><div class="times" id="t03back"></div></div>
-  <p>Last bus back: <b data-last></b>. Do not be late.</p>
   <details>
     <summary>Bus 02 times</summary>
     <div class="fold">
@@ -135,6 +135,12 @@ footer { font-size:.86rem; color:var(--muted); }
       <div><h3>From Soc Giang</h3><div class="times" id="t02back"></div></div>
     </div>
   </details>
+</section>
+
+<section>
+  <h2>Getting back</h2>
+  <p>Wait at the car park at the falls main gate. Buses to Cao Bang leave from there.</p>
+  <p class="warn"><b>Last bus: <span data-last></span>.</b> Be at the car park by <span data-spare></span>.</p>
 </section>
 
 <section>
@@ -182,6 +188,7 @@ function fillTimes(id, times, markLast) {
 
 each('[data-fare]', function (n) { n.textContent = D.fare; });
 each('[data-last]', function (n) { n.textContent = D.routes['03'].back[D.routes['03'].back.length - 1]; });
+each('[data-spare]', function (n) { n.textContent = D.routes['03'].back[D.routes['03'].back.length - 2]; });
 fillTimes('t03out', D.routes['03'].out, false);
 fillTimes('t03back', D.routes['03'].back, true);
 fillTimes('t02out', D.routes['02'].out, false);
