@@ -671,6 +671,10 @@ footer {
   padding: 0 4px;
   line-height: 1.6;
 }
+.stories { display:grid; gap:10px; }
+.story { padding:14px 16px; background:var(--surface); border:1px solid var(--line); border-radius:12px; }
+.story p { margin:0; }
+.story small { display:block; margin-top:6px; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -770,6 +774,12 @@ footer {
   </div>
 </section>
 
+<section id="stories" hidden>
+  <h2>From other travellers</h2>
+  <div class="stories" id="storyList"></div>
+  <a class="btn" id="storyForm" target="_blank" rel="noopener" hidden>Share your trip</a>
+</section>
+
 <section class="letter">
   <h2>A note from Luong</h2>
   <p>Dear traveller,</p>
@@ -852,6 +862,42 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
   each('video', function (v) { watch.observe(v); });
 } else {
   each('video', function (v) { v.controls = true; });
+}
+
+/* Traveller stories: a public CSV with columns name, country, date, story. */
+function parseCsv(t) {
+  var rows = [], row = [], c = '', q = false;
+  for (var i = 0; i < t.length; i++) {
+    var ch = t[i];
+    if (q) {
+      if (ch === '"' && t[i + 1] === '"') { c += '"'; i++; }
+      else if (ch === '"') q = false;
+      else c += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(c); c = ''; }
+    else if (ch === '\n') { row.push(c); rows.push(row); row = []; c = ''; }
+    else if (ch !== '\r') c += ch;
+  }
+  if (c || row.length) { row.push(c); rows.push(row); }
+  return rows;
+}
+function renderStories(rows) {
+  var list = el('storyList');
+  list.textContent = '';
+  rows.filter(function (r) { return (r[3] || '').trim(); }).forEach(function (r) {
+    var card = document.createElement('article'), p = document.createElement('p'), who = document.createElement('small');
+    card.className = 'story';
+    p.textContent = r[3];
+    who.textContent = [r[0], r[1], r[2]].filter(Boolean).join(', ');
+    card.appendChild(p); card.appendChild(who); list.appendChild(card);
+  });
+  el('stories').hidden = !list.children.length && !D.storiesForm;
+}
+if (D.storiesForm) { el('storyForm').href = D.storiesForm; el('storyForm').hidden = false; el('stories').hidden = false; }
+if (D.storiesCsv) {
+  fetch(D.storiesCsv).then(function (r) { return r.text(); }).then(function (t) {
+    renderStories(parseCsv(t).slice(1).reverse());
+  }).catch(function () {});
 }
 
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
