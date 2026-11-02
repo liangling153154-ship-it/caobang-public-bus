@@ -43,7 +43,7 @@ video { display:block; width:100%; height:auto; background:#EAEFED; }
 .steps li { display:grid; grid-template-columns:34px 1fr; gap:10px; counter-increment:n; }
 .steps li::before { content:counter(n); width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:var(--jade); color:#fff; font-weight:700; }
 
-.tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .tabs button { min-height:56px; padding:6px; border-radius:12px; border:1.5px solid var(--jade); background:var(--surface); color:var(--jade-dark); line-height:1.25; }
 .tabs b, .tabs span { display:block; }
 .tabs span { font-size:.82rem; }
@@ -110,7 +110,8 @@ footer { font-size:.86rem; color:var(--muted); }
   <h2>Where the bus runs</h2>
   <div class="tabs" id="tabs">
     <button type="button" data-route="03" aria-pressed="true"><b>Bus 03</b><span>To the falls</span></button>
-    <button type="button" data-route="02" aria-pressed="false"><b>Bus 02</b><span>Far from bus 03?</span></button>
+    <button type="button" data-route="02" aria-pressed="false"><b>Bus 02</b><span>To change bus</span></button>
+    <button type="button" data-route="both" aria-pressed="false"><b>Both</b><span>03 and 02</span></button>
   </div>
   <div class="map"><iframe id="map" title="Bus route map" loading="lazy" allow="geolocation" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
   <p>Tap below to see where you are on the map.</p>
@@ -209,7 +210,9 @@ function showRoute(code) {
   el('map').src = 'https://www.google.com/maps/d/embed?hl=en&mid=' + D.maps[code];
   el('mapLink').href = 'https://www.google.com/maps/d/viewer?hl=en&mid=' + D.maps[code];
   each('#tabs button', function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-route') === code ? 'true' : 'false'); });
-  each('.key [data-route]', function (p) { p.hidden = p.getAttribute('data-route') !== code; });
+  each('.key [data-route]', function (p) {
+    p.hidden = code === 'both' ? p.tagName !== 'P' : p.getAttribute('data-route') !== code;
+  });
 }
 showRoute('03');
 el('tabs').addEventListener('click', function (e) {

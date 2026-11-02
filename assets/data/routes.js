@@ -13,7 +13,8 @@ window.BG = {
   /* The owner's Google My Maps ids: one map per route. */
   maps: {
     "03": "1GPL_-kdiNvrdkv0_iJ8QQd9Ul59MlLM",
-    "02": "1VqIww3Oqt2cMy54fN9d-G665mQ3-uoc"
+    "02": "1VqIww3Oqt2cMy54fN9d-G665mQ3-uoc",
+    both: "1vBD9SN7zH7b8JOHUm4lGtgujpUxFvTQ"
   },
 
   routes: {
