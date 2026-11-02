@@ -3,78 +3,644 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Local bus to Ban Gioc Waterfall — Cao Bang</title>
+<title>Local bus to Ban Gioc Waterfall â€” Cao Bang</title>
 <meta name="description" content="How to catch the local bus from anywhere in Cao Bang to Ban Gioc Waterfall: where the bus runs, when it leaves, and what to say.">
-<meta name="theme-color" content="#0B6E5F">
+<meta name="theme-color" content="#075246">
 <style>
 :root {
-  --ground:#F4F6F5; --surface:#FFF; --ink:#141A18; --muted:#525E5A; --line:#D4DBD8;
-  --jade:#0B6E5F; --jade-dark:#07564A; --blue:#1D4E89;
-  --amber:#7A3C04; --amber-soft:#FBEEDF; --red:#9B2C1F; --red-soft:#FAE8E4;
+  --ground: #EEF3F0;
+  --surface: #FFFFFF;
+  --surface-sunken: #E1EAE5;
+  --surface-tint: #E3F0E9;
+  --ink: #101C16;
+  --muted: #3B4E44;
+  --line: #C6D5CD;
+  --line-strong: #9AB2A6;
+  --jade: #0B6B4F;
+  --jade-dark: #074F3A;
+  --jade-ink: #DDF5EC;
+  --bus-gold: #F5B800;
+  --bus-gold-soft: #FFF5CC;
+  --bus-red: #C83222;
+  --blue: #174982;
+  --blue-soft: #E9F1FA;
+  --blue-line: #B8CEE8;
+  --amber: #5E2D00;
+  --amber-soft: #FCEFD9;
+  --amber-line: #E6C183;
+  --red: #8F1D14;
+  --red-soft: #FCE8E6;
+  --red-line: #EBAFA8;
 }
-*,*::before,*::after { box-sizing:border-box; }
-html { -webkit-text-size-adjust:100%; }
-body { margin:0; background:var(--ground); color:var(--ink); font:18px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; }
-h1,h2,h3,p,ol,ul { margin:0; padding:0; }
-ol,ul { list-style:none; }
-img { display:block; width:100%; height:auto; }
-button { font:inherit; color:inherit; cursor:pointer; }
-a { color:var(--jade-dark); }
-:focus-visible { outline:3px solid var(--jade); outline-offset:2px; }
 
-.page { max-width:640px; margin:0 auto; padding:0 16px 32px; display:grid; gap:32px; }
-main { display:grid; gap:32px; min-width:0; }
-header { background:var(--jade); color:#fff; margin:0 -16px; padding:24px 16px; }
-@media (min-width:672px){ header { border-radius:0 0 16px 16px; } }
-h1 { font-size:1.75rem; line-height:1.2; }
-header p { margin-top:8px; }
-h2 { font-size:1.35rem; line-height:1.25; }
-h3 { font-size:1rem; margin-bottom:6px; }
-section { display:grid; gap:12px; min-width:0; }
-.warn { padding:13px 15px; border-radius:12px; background:var(--amber-soft); color:var(--amber); }
-.photo { border-radius:12px; }
-figure { margin:0; }
-figcaption { margin-top:6px; font-size:.92rem; color:var(--muted); }
-.rail { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:0 16px 4px; scroll-padding:0 16px; }
-.rail figure { flex:0 0 85%; scroll-snap-align:start; }
-video { display:block; width:100%; height:auto; background:#EAEFED; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-.steps { display:grid; gap:12px; counter-reset:n; }
-.steps li { display:grid; grid-template-columns:34px 1fr; gap:10px; counter-increment:n; }
-.steps li::before { content:counter(n); width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:var(--jade); color:#fff; font-weight:700; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  color-scheme: light;
+  scrollbar-color: var(--line-strong) var(--ground);
+}
 
-.tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.tabs button { min-height:56px; padding:6px; border-radius:12px; border:1.5px solid var(--jade); background:var(--surface); color:var(--jade-dark); line-height:1.25; }
-.tabs b, .tabs span { display:block; }
-.tabs span { font-size:.82rem; }
-.tabs button[aria-pressed="true"] { background:var(--jade); color:#fff; }
-.map { height:min(70vh,520px); min-height:360px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#EAEFED; }
-.map iframe { display:block; width:100%; height:100%; border:0; }
-.btn { display:flex; align-items:center; justify-content:center; min-height:52px; padding:0 16px; border-radius:12px; background:var(--jade); color:#fff; font-weight:700; text-decoration:none; text-align:center; }
-.key { display:grid; gap:10px; }
-.key p { padding-left:12px; border-left:5px solid var(--jade); }
-.key p.r2 { border-color:var(--blue); }
+::selection {
+  background: var(--bus-gold);
+  color: var(--ink);
+}
 
-.times { display:grid; grid-template-columns:repeat(auto-fill,minmax(62px,1fr)); gap:6px; }
-.times span { padding:8px 2px; text-align:center; border-radius:8px; background:var(--surface); border:1px solid var(--line); font-weight:600; font-size:.92rem; font-variant-numeric:tabular-nums; }
-.times .is-last { background:var(--red-soft); border-color:var(--red-soft); color:var(--red); }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 1.0625rem/1.58 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  caret-color: var(--jade);
+}
 
-.cards { display:grid; gap:8px; }
-.cards button { width:100%; min-height:56px; padding:11px 14px; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:12px; }
-.cards b, .cards span { display:block; }
-.cards span { color:var(--muted); font-size:.88rem; }
-dialog { border:0; padding:0; width:100vw; height:100dvh; max-width:none; max-height:none; background:#fff; color:var(--ink); }
-.big { height:100%; padding:24px; display:grid; grid-template-rows:1fr auto; gap:20px; }
-#bigVi { align-self:center; font-size:clamp(2rem,10vw,3rem); font-weight:800; line-height:1.25; text-align:center; }
-.big .btn { width:100%; border:0; }
+@media (min-width: 640px) {
+  body {
+    font-size: 1.125rem;
+  }
+}
 
-details { background:var(--surface); border:1px solid var(--line); border-radius:12px; }
-summary { min-height:52px; padding:13px 16px; font-weight:600; cursor:pointer; }
-details p { padding:0 16px 14px; }
-.faq { display:grid; gap:8px; }
-.letter { padding:18px 16px; background:var(--surface); border:1px solid var(--line); border-radius:12px; }
-.fold { padding:0 16px 16px; display:grid; gap:12px; }
-footer { font-size:.86rem; color:var(--muted); }
+h1, h2, h3, p, ol, ul {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+p, li, figcaption {
+  text-wrap: pretty;
+  max-width: 68ch;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img, video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: var(--jade-dark);
+  font-weight: 600;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 150ms ease-out;
+}
+
+a:hover {
+  color: var(--jade);
+}
+
+:focus-visible {
+  outline: 3px solid var(--jade);
+  outline-offset: 3px;
+}
+
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+  display: grid;
+  gap: 36px;
+}
+
+@media (min-width: 680px) {
+  .page {
+    padding: 20px 24px 64px;
+    gap: 44px;
+  }
+}
+
+main {
+  display: grid;
+  gap: 40px;
+  min-width: 0;
+}
+
+header {
+  background: var(--jade);
+  color: #FFFFFF;
+  margin: 0 -16px;
+  padding: 28px 20px 30px;
+  border-bottom: 1px solid var(--jade-dark);
+  box-shadow: 0 8px 24px rgba(7, 79, 58, 0.14);
+}
+
+@media (min-width: 680px) {
+  header {
+    margin: 0;
+    padding: 34px 32px 36px;
+    border-radius: 16px;
+    border: 1px solid var(--jade-dark);
+  }
+}
+
+h1 {
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 2.35rem;
+  }
+}
+
+header p {
+  margin-top: 14px;
+  color: var(--jade-ink);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+header [data-fare] {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--bus-gold);
+  color: var(--ink);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+section {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+section + section {
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  section {
+    gap: 16px;
+  }
+  section + section {
+    padding-top: 36px;
+  }
+}
+
+h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  margin-bottom: 2px;
+}
+
+h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.warn {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--amber-soft);
+  border: 1px solid var(--amber-line);
+  color: var(--amber);
+  line-height: 1.5;
+}
+
+.warn b {
+  color: #3D1C00;
+  font-weight: 800;
+}
+
+.steps {
+  display: grid;
+  gap: 12px;
+  counter-reset: n;
+  margin: 4px 0;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  align-items: center;
+  gap: 14px;
+  counter-increment: n;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.steps li::before {
+  content: counter(n);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--jade);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.steps b {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--bus-gold-soft);
+  border: 1px solid var(--amber-line);
+  color: var(--ink);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.photo {
+  border-radius: 10px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+
+figure {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+figcaption {
+  padding: 2px 6px 4px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px 2px 10px;
+  scroll-padding: 0 2px;
+}
+
+.rail figure {
+  flex: 0 0 84%;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 580px) {
+  .rail {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    padding: 4px 0 0;
+  }
+  .rail figure {
+    flex: initial;
+  }
+}
+
+video {
+  background: var(--surface-sunken);
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 6px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.tabs button {
+  min-height: 60px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  line-height: 1.28;
+  transition: background-color 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.tabs button:hover:not([aria-pressed="true"]) {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+.tabs b, .tabs span {
+  display: block;
+}
+
+.tabs b {
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.tabs span {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.tabs button[aria-pressed="true"] {
+  background: var(--jade);
+  color: #FFFFFF;
+  border-color: var(--jade-dark);
+}
+
+.tabs button[aria-pressed="true"] span {
+  color: var(--jade-ink);
+}
+
+.map {
+  height: min(68vh, 500px);
+  min-height: 360px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: var(--jade);
+  border: 1px solid var(--jade-dark);
+  color: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 150ms ease-out, transform 150ms ease-out;
+}
+
+.btn:hover {
+  background: var(--jade-dark);
+  color: #FFFFFF;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.key {
+  display: grid;
+  gap: 12px;
+}
+
+.key p {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--surface-tint);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+}
+
+.key p.r2 {
+  background: var(--blue-soft);
+  border-color: var(--blue-line);
+  color: #0E294B;
+}
+
+.times {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 8px;
+}
+
+.times span {
+  padding: 9px 4px;
+  text-align: center;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.times .is-last {
+  background: var(--red-soft);
+  border-color: var(--red-line);
+  color: var(--red);
+  font-weight: 800;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards button {
+  width: 100%;
+  min-height: 64px;
+  padding: 14px 44px 14px 16px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  position: relative;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out;
+}
+
+.cards button:hover {
+  background: var(--surface-tint);
+  border-color: var(--jade);
+}
+
+.cards button:active {
+  transform: translateY(1px);
+}
+
+.cards button::after {
+  content: "â†—";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--jade);
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+.cards b, .cards span {
+  display: block;
+}
+
+.cards b {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.cards span {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 3px;
+}
+
+dialog {
+  border: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.big {
+  height: 100%;
+  padding: 32px 24px 28px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 24px;
+}
+
+#bigVi {
+  align-self: center;
+  justify-self: center;
+  font-size: clamp(2.15rem, 9.5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.22;
+  text-align: center;
+  color: var(--ink);
+  max-width: 18ch;
+}
+
+.big .btn {
+  width: 100%;
+  max-width: 420px;
+  justify-self: center;
+}
+
+details {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+summary {
+  min-height: 54px;
+  padding: 14px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background-color 150ms ease-out;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::after {
+  content: "+";
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--jade);
+  line-height: 1;
+}
+
+details[open] > summary {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-tint);
+}
+
+details[open] > summary::after {
+  content: "âˆ’";
+}
+
+details p {
+  padding: 14px 18px 16px;
+  color: var(--ink);
+}
+
+.faq {
+  display: grid;
+  gap: 10px;
+}
+
+.fold {
+  padding: 12px 16px 18px;
+  display: grid;
+  gap: 16px;
+  background: var(--surface);
+}
+
+.letter {
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+}
+
+@media (min-width: 640px) {
+  .letter {
+    padding: 28px 26px;
+  }
+}
+
+.letter p + p {
+  margin-top: 2px;
+}
+
+footer {
+  font-size: 0.92rem;
+  color: var(--muted);
+  padding: 0 4px;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -96,7 +662,7 @@ footer { font-size:.86rem; color:var(--muted); }
     <li><span>See bus <b>03</b>? It is yellow and red. Wave your arm.</span></li>
     <li><span>Pay on the bus: <b data-fare></b>, cash only.</span></li>
   </ol>
-  <p class="warn"><b>Go early. Do not trust the bus times.</b> Go to the road now and wait. A bus comes every 30–40 minutes.</p>
+  <p class="warn"><b>Go early. Do not trust the bus times.</b> Go to the road now and wait. A bus comes every 30â€“40 minutes.</p>
   <p class="warn"><b>Leave the city before 12:00.</b> After that you may miss the last bus back.</p>
   <div class="rail">
     <figure><video class="photo" muted loop playsinline preload="none" poster="assets/video/hotel-gate.jpg" width="854" height="480" src="assets/video/hotel-gate.mp4" aria-label="A traveller waits at the roadside and waves as the bus comes."></video><figcaption>Stand at the roadside. Wave.</figcaption></figure>
@@ -154,9 +720,9 @@ footer { font-size:.86rem; color:var(--muted); }
 <section>
   <h2>Questions</h2>
   <div class="faq">
-    <details><summary>The bus did not stop</summary><p>Wave early. The next bus comes in 30–40 minutes.</p></details>
-    <details><summary>Is this my bus?</summary><p>Look for 03. The sign may say “Bản Giốc” or “Trùng Khánh”. Show the line “Does this bus go to Ban Gioc?”</p></details>
-    <details><summary>Can I get off anywhere?</summary><p>Yes. Show “Please stop here” before your place.</p></details>
+    <details><summary>The bus did not stop</summary><p>Wave early. The next bus comes in 30â€“40 minutes.</p></details>
+    <details><summary>Is this my bus?</summary><p>Look for 03. The sign may say â€œBáº£n Giá»‘câ€ or â€œTrÃ¹ng KhÃ¡nhâ€. Show the line â€œDoes this bus go to Ban Gioc?â€</p></details>
+    <details><summary>Can I get off anywhere?</summary><p>Yes. Show â€œPlease stop hereâ€ before your place.</p></details>
     <details><summary>Do I buy a ticket first?</summary><p>No. Pay on the bus. Bring small notes.</p></details>
     <details><summary>Is the waterfall ticket included?</summary><p>No. Buy it at the falls gate.</p></details>
     <details><summary>I missed the last bus</summary><p>Take a motorbike taxi or a car. Agree the price first.</p></details>
