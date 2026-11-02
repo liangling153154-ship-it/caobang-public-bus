@@ -8,8 +8,8 @@
    ===================================================================== */
 "use strict";
 
-var VERSION = "cbbus-v5"; // v4: more bus photos and video
-var FILES = ["./", "index.html", "assets/data/routes.js", "assets/photos/bus-hero.jpg", "assets/photos/bus-boarding.jpg", "assets/photos/bus-02.jpg", "assets/photos/ngoc-xuan.jpg", "assets/photos/stop-1.jpg", "assets/photos/stop-2.jpg", "assets/photos/stop-3.jpg", "assets/video/hotel-gate.jpg", "assets/video/bus-sen.jpg"];
+var VERSION = "cbbus-v6"; // v4: more bus photos and video
+var FILES = ["./", "index.html", "assets/data/routes.js", "assets/photos/bus-hero.jpg", "assets/photos/bus-boarding.jpg", "assets/photos/bus-02.jpg", "assets/photos/ngoc-xuan.jpg", "assets/photos/stop-1.jpg", "assets/photos/stop-2.jpg", "assets/photos/stop-3.jpg", "assets/video/hotel-gate.jpg"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
