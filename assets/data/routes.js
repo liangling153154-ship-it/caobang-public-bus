@@ -36,6 +36,8 @@ window.BG = {
 
   /* Show these to the conductor. */
   phrases: [
+    { vi: "Tôi đứng bên này đường để bắt xe đi Thác Bản Giốc có đúng không?",
+      en: "Is this the right side for the bus to Ban Gioc?" },
     { vi: "Tôi muốn đi Thác Bản Giốc.",
       en: "I want to go to Ban Gioc Waterfall." },
     { vi: "Xe này có đi Thác Bản Giốc không?",
